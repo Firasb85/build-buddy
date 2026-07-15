@@ -101,9 +101,34 @@ export const runPPS = createServerFn({ method: "POST" })
     return { runAt, count: results.length, objective };
   });
 
+export type PPSComponents = {
+  stockout_risk: number;
+  profit_impact: number;
+  customer_importance: number;
+  line_efficiency: number;
+  material_readiness: number;
+  strategic_weight: number;
+};
+
+export type PPSRow = {
+  product_id: string;
+  pps: number;
+  components: PPSComponents;
+  constraint_status: string;
+  constraint_notes: string | null;
+  run_at: string;
+  products: {
+    name_ar: string;
+    name_en: string;
+    sku: string;
+    stock_qty: number;
+    daily_demand: number;
+  } | null;
+};
+
 export const getLatestPPS = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .handler(async ({ context }): Promise<{ runAt: string | null; rows: PPSRow[] }> => {
     const sb = context.supabase;
     const { data: latest } = await sb.from("pps_snapshots").select("run_at").order("run_at", { ascending: false }).limit(1);
     if (!latest?.[0]) return { runAt: null, rows: [] };
@@ -113,5 +138,5 @@ export const getLatestPPS = createServerFn({ method: "GET" })
       .select("product_id,pps,components,constraint_status,constraint_notes,run_at,products(name_ar,name_en,sku,stock_qty,daily_demand)")
       .eq("run_at", runAt)
       .order("pps", { ascending: false });
-    return { runAt, rows: data ?? [] };
+    return { runAt, rows: (data ?? []) as unknown as PPSRow[] };
   });
