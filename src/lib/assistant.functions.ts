@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { withJobTracking } from "./jobs-wrapper";
 import { answerFromContext, detectIntent, type AssistantContext } from "./assistant.server";
 import type { Json } from "@/integrations/supabase/types";
 
@@ -101,7 +102,7 @@ async function buildContext(sb: any): Promise<AssistantContext> {
 export const askAssistant = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => QuestionSchema.parse(input))
-  .handler(async ({ data, context }) => {
+  .handler(withJobTracking("assistant", async ({ data, context }) => {
     const sb = context.supabase;
     const ctx = await buildContext(sb);
     const intent = detectIntent(data.question);
@@ -162,7 +163,7 @@ export const askAssistant = createServerFn({ method: "POST" })
     });
 
     return { answer, intent: intent.intent, used_llm: usedLLM, context: ctx };
-  });
+  }));
 
 export const listAssistantHistory = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])

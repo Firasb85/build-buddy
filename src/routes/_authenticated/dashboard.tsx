@@ -8,9 +8,11 @@ import { listRecommendations, decideRecommendation } from "@/lib/decisions.funct
 import { generateBriefing } from "@/lib/briefing.functions";
 import { getObjective } from "@/lib/objective.functions";
 import { useI18n, pickName } from "@/hooks/use-i18n";
-import { Activity, AlertTriangle, RefreshCw, Sparkles, Check, X, TrendingUp, Brain, Bot, BarChart3, FlaskConical, Zap } from "lucide-react";
+import { Activity, AlertTriangle, RefreshCw, Sparkles, Check, X, TrendingUp, Brain, Bot, BarChart3, FlaskConical, Zap, Download } from "lucide-react";
 import { AlertsPanel } from "@/components/alerts-panel";
+import { AssumptionsEditor } from "@/components/assumptions-editor";
 import { Link } from "@tanstack/react-router";
+import { rowsToCsv, downloadCsv, rowsToPdf, type ColumnDef } from "@/lib/export.client";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: DashboardWrapper,
@@ -183,7 +185,27 @@ function Dashboard() {
 
       {/* PPS Top 5 */}
       <section className="card-panel p-5">
-        <h2 className="text-lg font-semibold mb-4">{t.pps} · Top 5</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold">{t.pps} · Top 5</h2>
+          {topFive.length > 0 && (
+            <div className="flex items-center gap-1">
+              <button
+                className="btn-ghost !px-2 !py-1 text-xs"
+                onClick={() => exportPpsCsv(topFive, lang)}
+                title={t.export_csv}
+              >
+                <Download className="h-3 w-3" /> CSV
+              </button>
+              <button
+                className="btn-ghost !px-2 !py-1 text-xs"
+                onClick={() => exportPpsPdf(topFive, lang)}
+                title={t.export_pdf}
+              >
+                <Download className="h-3 w-3" /> PDF
+              </button>
+            </div>
+          )}
+        </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -236,8 +258,45 @@ function Dashboard() {
 
       {/* Alerts panel */}
       <AlertsPanel />
+
+      {/* Assumptions editor — Phase 3 */}
+      <AssumptionsEditor />
     </div>
   );
+}
+
+function exportPpsCsv(rows: Array<{ product_id: string; pps: number; components: { stockout_risk: number; profit_impact: number; customer_importance: number; line_efficiency: number; material_readiness: number; strategic_weight: number }; constraint_status: string; products?: { name_ar: string; name_en: string; sku: string } | null }>, lang: "ar" | "en") {
+  type Row = typeof rows[number];
+  const cols: ColumnDef<Row>[] = [
+    { key: "sku", label: "SKU", format: (r) => r.products?.sku ?? "" },
+    { key: "name", label: lang === "ar" ? "المنتج" : "Product", format: (r) => r.products ? (lang === "ar" ? r.products.name_ar : r.products.name_en) : "" },
+    { key: "pps", label: "PPS" },
+    { key: "stockout_risk", label: "Stockout" },
+    { key: "profit_impact", label: "Profit" },
+    { key: "customer_importance", label: "Customer" },
+    { key: "line_efficiency", label: "Line" },
+    { key: "material_readiness", label: "Material" },
+    { key: "strategic_weight", label: "Strategic" },
+    { key: "status", label: "Status", format: (r) => r.constraint_status },
+  ];
+  downloadCsv(`ai-eos-pps-top5-${new Date().toISOString().slice(0, 10)}.csv`, rowsToCsv(rows as unknown as Row[], cols));
+}
+
+async function exportPpsPdf(rows: Array<{ product_id: string; pps: number; components: { stockout_risk: number; profit_impact: number; customer_importance: number; line_efficiency: number; material_readiness: number; strategic_weight: number }; constraint_status: string; products?: { name_ar: string; name_en: string; sku: string } | null }>, lang: "ar" | "en") {
+  type Row = typeof rows[number];
+  const cols: ColumnDef<Row>[] = [
+    { key: "sku", label: "SKU", format: (r) => r.products?.sku ?? "" },
+    { key: "name", label: lang === "ar" ? "المنتج" : "Product", format: (r) => r.products ? (lang === "ar" ? r.products.name_ar : r.products.name_en) : "" },
+    { key: "pps", label: "PPS" },
+    { key: "stockout_risk", label: "Stockout" },
+    { key: "profit_impact", label: "Profit" },
+    { key: "customer_importance", label: "Customer" },
+    { key: "line_efficiency", label: "Line" },
+    { key: "material_readiness", label: "Material" },
+    { key: "strategic_weight", label: "Strategic" },
+    { key: "status", label: "Status", format: (r) => r.constraint_status },
+  ];
+  await rowsToPdf(`ai-eos-pps-top5-${new Date().toISOString().slice(0, 10)}.pdf`, "AI-EOS · PPS Top 5", rows as unknown as Row[], cols, { subtitle: new Date().toLocaleString() });
 }
 
 function KPI({ label, value, suffix, accent }: { label: string; value: string; suffix?: string; accent?: boolean }) {

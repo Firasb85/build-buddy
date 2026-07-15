@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getObjective, setObjective } from "@/lib/objective.functions";
 import { useI18n } from "@/hooks/use-i18n";
+import { JobsPanel } from "@/components/jobs-panel";
 
 export const Route = createFileRoute("/_authenticated/settings")({
   component: SettingsPage,
@@ -56,6 +57,7 @@ function SettingsPage() {
           ))}
         </div>
       </div>
+      <JobsPanel />
     </div>
   );
 }

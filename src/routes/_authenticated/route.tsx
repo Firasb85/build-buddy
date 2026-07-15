@@ -15,6 +15,11 @@ import {
   FlaskConical,
   Bot,
   Brain,
+  Package,
+  Boxes,
+  Cpu,
+  Users,
+  ShoppingCart,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated")({
@@ -41,6 +46,11 @@ function AuthedShell() {
     { to: "/simulate", label: t.nav_simulate, icon: FlaskConical },
     { to: "/assistant", label: t.nav_assistant, icon: Bot },
     { to: "/learning", label: t.nav_learning, icon: Brain },
+    { to: "/products", label: t.nav_products_crud, icon: Package },
+    { to: "/materials", label: t.nav_materials_crud, icon: Boxes },
+    { to: "/lines", label: t.nav_lines_crud, icon: Cpu },
+    { to: "/customers", label: t.nav_customers_crud, icon: Users },
+    { to: "/orders", label: t.nav_orders_crud, icon: ShoppingCart },
     { to: "/factory", label: t.nav_factory, icon: Factory },
     { to: "/decisions", label: t.nav_decisions, icon: ScrollText },
     { to: "/settings", label: t.nav_settings, icon: SettingsIcon },

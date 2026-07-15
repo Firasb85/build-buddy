@@ -1,11 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { withJobTracking } from "./jobs-wrapper";
 
 export const generateBriefing = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => z.object({ lang: z.enum(["ar", "en"]) }).parse(input))
-  .handler(async ({ data, context }) => {
+  .handler(withJobTracking("briefing", async ({ data, context }) => {
     const sb = context.supabase;
     const [{ data: recos }, { data: obj }, { data: kpis }] = await Promise.all([
       sb.from("recommendations").select("action_ar,action_en,reason_ar,reason_en,priority,impact,products(name_ar,name_en,sku,stock_qty,daily_demand)").eq("status", "pending").order("priority", { ascending: false }).limit(5),
@@ -65,4 +66,4 @@ Write 4 short paragraphs:
     const json = await res.json();
     const content = json?.choices?.[0]?.message?.content ?? "";
     return { text: content as string, objective, avg_stock_days: avgStockDays };
-  });
+  }));

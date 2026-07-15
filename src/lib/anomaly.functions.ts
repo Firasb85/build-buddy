@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { withJobTracking } from "./jobs-wrapper";
 import {
   detectAlerts,
   type ProductSnapshot,
@@ -12,7 +13,7 @@ import {
  */
 export const detectAndPersistAlerts = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .handler(withJobTracking("anomaly", async ({ context }) => {
     const sb = context.supabase;
     const since = new Date(Date.now() - 30 * 86400_000).toISOString().slice(0, 10);
 
@@ -102,7 +103,7 @@ export const detectAndPersistAlerts = createServerFn({ method: "POST" })
     if (newRows.length) await sb.from("alert_states").insert(newRows);
 
     return { detected: detected.length, new_alerts: newRows.length, alerts: detected };
-  });
+  }));
 
 export const listActiveAlerts = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])

@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { withJobTracking } from "./jobs-wrapper";
 import {
   computePPSForAll,
   type Objective,
@@ -12,10 +13,10 @@ import {
 
 export const runPPS = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .handler(withJobTracking("pps", async ({ context }) => {
     const sb = context.supabase;
     const [obj, products, lines, bom, materials, orders, customers] = await Promise.all([
-      sb.from("objective_settings").select("objective").eq("id", 1).maybeSingle(),
+      sb.from("objective_settings").select("objective,custom_weights").eq("id", 1).maybeSingle(),
       sb.from("products").select("id,sku,name_ar,name_en,daily_demand,margin_pct,stability,strategic_weight,stock_qty,preferred_line_id,moq").eq("active", true),
       sb.from("production_lines").select("id,quality_factor,status"),
       sb.from("bom_items").select("product_id,material_id,quantity_per_unit"),
@@ -49,6 +50,7 @@ export const runPPS = createServerFn({ method: "POST" })
     }
 
     const objective = (obj.data?.objective ?? "default") as Objective;
+    const customWeights = (obj.data?.custom_weights as number[] | null) ?? undefined;
     const results = computePPSForAll({
       objective,
       products: productsInput,
@@ -56,6 +58,7 @@ export const runPPS = createServerFn({ method: "POST" })
       bom: bomInput,
       materials: matsInput,
       customerAgg: custAgg,
+      customWeights,
     });
 
     const runAt = new Date().toISOString();
@@ -99,7 +102,7 @@ export const runPPS = createServerFn({ method: "POST" })
     if (recoRows.length) await sb.from("recommendations").insert(recoRows);
 
     return { runAt, count: results.length, objective };
-  });
+  }));
 
 export type PPSComponents = {
   stockout_risk: number;

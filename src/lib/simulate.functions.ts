@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { withJobTracking } from "./jobs-wrapper";
 import {
   runSimulation,
   type SimParams,
@@ -74,7 +75,7 @@ async function loadSimInputs(sb: any) {
 export const runSimulationHandler = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: unknown) => RunSimSchema.parse(input))
-  .handler(async ({ data, context }) => {
+  .handler(withJobTracking("simulate", async ({ data, context }) => {
     const sb = context.supabase;
     const { products, lines, materials, openOrderValue } = await loadSimInputs(sb);
     const impact = runSimulation({
@@ -93,7 +94,7 @@ export const runSimulationHandler = createServerFn({ method: "POST" })
       created_by: context.userId,
     });
     return impact;
-  });
+  }));
 
 export const listSimulationRuns = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])

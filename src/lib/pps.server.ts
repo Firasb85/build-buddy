@@ -75,8 +75,15 @@ export function computePPSForAll(input: {
   bom: BomInput[];
   materials: MaterialInput[];
   customerAgg: Record<string, CustomerAgg>;
+  /** Optional override of the 6 weights (must sum to 1). Used by the "Edit assumptions" flow. */
+  customWeights?: number[];
 }): PPSResult[] {
-  const [w1, w2, w3, w4, w5, w6] = WEIGHTS[input.objective];
+  const preset = WEIGHTS[input.objective];
+  const weights: number[] =
+    input.customWeights && input.customWeights.length === 6
+      ? input.customWeights
+      : [...preset];
+  const [w1, w2, w3, w4, w5, w6] = weights;
   const linesById = new Map(input.lines.map((l) => [l.id, l]));
   const matsById = new Map(input.materials.map((m) => [m.id, m]));
 

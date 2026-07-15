@@ -14,13 +14,18 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedSimulateRouteImport } from './routes/_authenticated/simulate'
+import { Route as AuthenticatedProductsRouteImport } from './routes/_authenticated/products'
 import { Route as AuthenticatedPrioritiesRouteImport } from './routes/_authenticated/priorities'
+import { Route as AuthenticatedOrdersRouteImport } from './routes/_authenticated/orders'
+import { Route as AuthenticatedMaterialsRouteImport } from './routes/_authenticated/materials'
 import { Route as AuthenticatedLearningRouteImport } from './routes/_authenticated/learning'
+import { Route as AuthenticatedLinesRouteImport } from './routes/_authenticated/lines'
 import { Route as AuthenticatedFactoryRouteImport } from './routes/_authenticated/factory'
 import { Route as AuthenticatedForecastRouteImport } from './routes/_authenticated/forecast'
 import { Route as AuthenticatedDecisionsRouteImport } from './routes/_authenticated/decisions'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedDailyRouteImport } from './routes/_authenticated/daily'
+import { Route as AuthenticatedCustomersRouteImport } from './routes/_authenticated/customers'
 import { Route as AuthenticatedAssistantRouteImport } from './routes/_authenticated/assistant'
 
 const AuthRoute = AuthRouteImport.update({
@@ -47,14 +52,34 @@ const AuthenticatedSimulateRoute = AuthenticatedSimulateRouteImport.update({
   path: '/simulate',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedProductsRoute = AuthenticatedProductsRouteImport.update({
+  id: '/products',
+  path: '/products',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedPrioritiesRoute = AuthenticatedPrioritiesRouteImport.update({
   id: '/priorities',
   path: '/priorities',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedOrdersRoute = AuthenticatedOrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedMaterialsRoute = AuthenticatedMaterialsRouteImport.update({
+  id: '/materials',
+  path: '/materials',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedLearningRoute = AuthenticatedLearningRouteImport.update({
   id: '/learning',
   path: '/learning',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedLinesRoute = AuthenticatedLinesRouteImport.update({
+  id: '/lines',
+  path: '/lines',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedFactoryRoute = AuthenticatedFactoryRouteImport.update({
@@ -82,6 +107,11 @@ const AuthenticatedDailyRoute = AuthenticatedDailyRouteImport.update({
   path: '/daily',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedCustomersRoute = AuthenticatedCustomersRouteImport.update({
+  id: '/customers',
+  path: '/customers',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAssistantRoute = AuthenticatedAssistantRouteImport.update({
   id: '/assistant',
   path: '/assistant',
@@ -92,13 +122,18 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/assistant': typeof AuthenticatedAssistantRoute
   '/auth': typeof AuthRoute
+  '/customers': typeof AuthenticatedCustomersRoute
   '/daily': typeof AuthenticatedDailyRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/decisions': typeof AuthenticatedDecisionsRoute
   '/factory': typeof AuthenticatedFactoryRoute
   '/forecast': typeof AuthenticatedForecastRoute
   '/learning': typeof AuthenticatedLearningRoute
+  '/lines': typeof AuthenticatedLinesRoute
+  '/materials': typeof AuthenticatedMaterialsRoute
+  '/orders': typeof AuthenticatedOrdersRoute
   '/priorities': typeof AuthenticatedPrioritiesRoute
+  '/products': typeof AuthenticatedProductsRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/simulate': typeof AuthenticatedSimulateRoute
 }
@@ -106,13 +141,18 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/assistant': typeof AuthenticatedAssistantRoute
   '/auth': typeof AuthRoute
+  '/customers': typeof AuthenticatedCustomersRoute
   '/daily': typeof AuthenticatedDailyRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/decisions': typeof AuthenticatedDecisionsRoute
   '/factory': typeof AuthenticatedFactoryRoute
   '/forecast': typeof AuthenticatedForecastRoute
   '/learning': typeof AuthenticatedLearningRoute
+  '/lines': typeof AuthenticatedLinesRoute
+  '/materials': typeof AuthenticatedMaterialsRoute
+  '/orders': typeof AuthenticatedOrdersRoute
   '/priorities': typeof AuthenticatedPrioritiesRoute
+  '/products': typeof AuthenticatedProductsRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/simulate': typeof AuthenticatedSimulateRoute
 }
@@ -122,13 +162,18 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/assistant': typeof AuthenticatedAssistantRoute
   '/auth': typeof AuthRoute
+  '/customers': typeof AuthenticatedCustomersRoute
   '/daily': typeof AuthenticatedDailyRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/decisions': typeof AuthenticatedDecisionsRoute
   '/factory': typeof AuthenticatedFactoryRoute
   '/forecast': typeof AuthenticatedForecastRoute
   '/learning': typeof AuthenticatedLearningRoute
+  '/lines': typeof AuthenticatedLinesRoute
+  '/materials': typeof AuthenticatedMaterialsRoute
+  '/orders': typeof AuthenticatedOrdersRoute
   '/priorities': typeof AuthenticatedPrioritiesRoute
+  '/products': typeof AuthenticatedProductsRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/simulate': typeof AuthenticatedSimulateRoute
 }
@@ -138,13 +183,18 @@ export interface FileRouteTypes {
     | '/'
     | '/assistant'
     | '/auth'
+    | '/customers'
     | '/daily'
     | '/dashboard'
     | '/decisions'
     | '/factory'
     | '/forecast'
     | '/learning'
+    | '/lines'
+    | '/materials'
+    | '/orders'
     | '/priorities'
+    | '/products'
     | '/settings'
     | '/simulate'
   fileRoutesByTo: FileRoutesByTo
@@ -152,13 +202,18 @@ export interface FileRouteTypes {
     | '/'
     | '/assistant'
     | '/auth'
+    | '/customers'
     | '/daily'
     | '/dashboard'
     | '/decisions'
     | '/factory'
     | '/forecast'
     | '/learning'
+    | '/lines'
+    | '/materials'
+    | '/orders'
     | '/priorities'
+    | '/products'
     | '/settings'
     | '/simulate'
   id:
@@ -167,13 +222,18 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/assistant'
     | '/auth'
+    | '/customers'
     | '/daily'
     | '/dashboard'
     | '/decisions'
     | '/factory'
     | '/forecast'
     | '/learning'
+    | '/lines'
+    | '/materials'
+    | '/orders'
     | '/priorities'
+    | '/products'
     | '/settings'
     | '/simulate'
   fileRoutesById: FileRoutesById
@@ -221,6 +281,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSimulateRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/products': {
+      id: '/_authenticated/products'
+      path: '/products'
+      fullPath: '/products'
+      preLoaderRoute: typeof AuthenticatedProductsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/priorities': {
       id: '/_authenticated/priorities'
       path: '/priorities'
@@ -228,11 +295,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPrioritiesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/orders': {
+      id: '/_authenticated/orders'
+      path: '/orders'
+      fullPath: '/orders'
+      preLoaderRoute: typeof AuthenticatedOrdersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/materials': {
+      id: '/_authenticated/materials'
+      path: '/materials'
+      fullPath: '/materials'
+      preLoaderRoute: typeof AuthenticatedMaterialsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/learning': {
       id: '/_authenticated/learning'
       path: '/learning'
       fullPath: '/learning'
       preLoaderRoute: typeof AuthenticatedLearningRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/lines': {
+      id: '/_authenticated/lines'
+      path: '/lines'
+      fullPath: '/lines'
+      preLoaderRoute: typeof AuthenticatedLinesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/factory': {
@@ -270,6 +358,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDailyRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/customers': {
+      id: '/_authenticated/customers'
+      path: '/customers'
+      fullPath: '/customers'
+      preLoaderRoute: typeof AuthenticatedCustomersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/assistant': {
       id: '/_authenticated/assistant'
       path: '/assistant'
@@ -281,29 +376,39 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAssistantRoute: typeof AuthenticatedAssistantRoute
+  AuthenticatedCustomersRoute: typeof AuthenticatedCustomersRoute
   AuthenticatedDailyRoute: typeof AuthenticatedDailyRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDecisionsRoute: typeof AuthenticatedDecisionsRoute
   AuthenticatedFactoryRoute: typeof AuthenticatedFactoryRoute
+  AuthenticatedForecastRoute: typeof AuthenticatedForecastRoute
+  AuthenticatedLearningRoute: typeof AuthenticatedLearningRoute
+  AuthenticatedLinesRoute: typeof AuthenticatedLinesRoute
+  AuthenticatedMaterialsRoute: typeof AuthenticatedMaterialsRoute
+  AuthenticatedOrdersRoute: typeof AuthenticatedOrdersRoute
   AuthenticatedPrioritiesRoute: typeof AuthenticatedPrioritiesRoute
+  AuthenticatedProductsRoute: typeof AuthenticatedProductsRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedSimulateRoute: typeof AuthenticatedSimulateRoute
-  AuthenticatedLearningRoute: typeof AuthenticatedLearningRoute
-  AuthenticatedForecastRoute: typeof AuthenticatedForecastRoute
-  AuthenticatedAssistantRoute: typeof AuthenticatedAssistantRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAssistantRoute: AuthenticatedAssistantRoute,
+  AuthenticatedCustomersRoute: AuthenticatedCustomersRoute,
   AuthenticatedDailyRoute: AuthenticatedDailyRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDecisionsRoute: AuthenticatedDecisionsRoute,
   AuthenticatedFactoryRoute: AuthenticatedFactoryRoute,
+  AuthenticatedForecastRoute: AuthenticatedForecastRoute,
+  AuthenticatedLearningRoute: AuthenticatedLearningRoute,
+  AuthenticatedLinesRoute: AuthenticatedLinesRoute,
+  AuthenticatedMaterialsRoute: AuthenticatedMaterialsRoute,
+  AuthenticatedOrdersRoute: AuthenticatedOrdersRoute,
   AuthenticatedPrioritiesRoute: AuthenticatedPrioritiesRoute,
+  AuthenticatedProductsRoute: AuthenticatedProductsRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedSimulateRoute: AuthenticatedSimulateRoute,
-  AuthenticatedLearningRoute: AuthenticatedLearningRoute,
-  AuthenticatedForecastRoute: AuthenticatedForecastRoute,
-  AuthenticatedAssistantRoute: AuthenticatedAssistantRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { withJobTracking } from "./jobs-wrapper";
 import { computeForecast, type ForecastResult, type Horizon, type Metric } from "./forecast.server";
 
 const HorizonSchema = z.enum(["7d", "4w", "3m"]);
@@ -89,7 +90,7 @@ export const runForecast = createServerFn({ method: "POST" })
       product_id: z.string().uuid().optional().nullable(),
     }).parse(input),
   )
-  .handler(async ({ data, context }) => {
+  .handler(withJobTracking("forecast", async ({ data, context }) => {
     const sb = context.supabase;
     const historyDays = 60;
 
@@ -225,7 +226,7 @@ export const runForecast = createServerFn({ method: "POST" })
     });
     await persistForecasts(sb, [result], "cash", data.horizon);
     return { results: [result] as ForecastResult[] };
-  });
+  }));
 
 /** Get the latest forecast run for display (no recompute). */
 export const getLatestForecasts = createServerFn({ method: "GET" })

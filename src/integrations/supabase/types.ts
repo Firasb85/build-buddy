@@ -706,6 +706,45 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_runs: {
+        Row: {
+          created_at: string
+          duration_ms: number | null
+          error_message: string | null
+          finished_at: string | null
+          id: string
+          kind: Database["public"]["Enums"]["ai_run_kind"]
+          params: Json | null
+          result_summary: Json | null
+          status: Database["public"]["Enums"]["ai_run_status"]
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          duration_ms?: number | null
+          error_message?: string | null
+          finished_at?: string | null
+          id?: string
+          kind: Database["public"]["Enums"]["ai_run_kind"]
+          params?: Json | null
+          result_summary?: Json | null
+          status?: Database["public"]["Enums"]["ai_run_status"]
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          duration_ms?: number | null
+          error_message?: string | null
+          finished_at?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["ai_run_kind"]
+          params?: Json | null
+          result_summary?: Json | null
+          status?: Database["public"]["Enums"]["ai_run_status"]
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -720,6 +759,14 @@ export type Database = {
       }
     }
     Enums: {
+      ai_run_kind:
+        | "pps"
+        | "forecast"
+        | "simulate"
+        | "briefing"
+        | "anomaly"
+        | "assistant"
+      ai_run_status: "running" | "success" | "error"
       alert_kind:
         | "stockout"
         | "overstock"
@@ -877,6 +924,8 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      ai_run_kind: ["pps", "forecast", "simulate", "briefing", "anomaly", "assistant"],
+      ai_run_status: ["running", "success", "error"],
       alert_kind: [
         "stockout",
         "overstock",
