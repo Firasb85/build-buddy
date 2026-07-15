@@ -1,16 +1,7 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-
-// Redirect helper: /_authenticated/ → /dashboard
-// We don't declare `/_authenticated/index` (would conflict with `/`).
-// Instead a small client redirect from /dashboard entry level.
-
-export const Route = createFileRoute("/_authenticated/dashboard")({
-  component: DashboardWrapper,
-});
-
-import { useQuery, useMutation, useQueryClient, useSuspenseQuery, queryOptions } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, queryOptions } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { runPPS, getLatestPPS } from "@/lib/pps.functions";
 import { listRecommendations, decideRecommendation } from "@/lib/decisions.functions";
@@ -18,7 +9,10 @@ import { generateBriefing } from "@/lib/briefing.functions";
 import { getObjective } from "@/lib/objective.functions";
 import { useI18n, pickName } from "@/hooks/use-i18n";
 import { Activity, AlertTriangle, RefreshCw, Sparkles, Check, X } from "lucide-react";
-import { useState } from "react";
+
+export const Route = createFileRoute("/_authenticated/dashboard")({
+  component: DashboardWrapper,
+});
 
 const ppsQO = queryOptions({ queryKey: ["pps-latest"], queryFn: () => getLatestPPS() });
 const recoQO = queryOptions({ queryKey: ["recommendations"], queryFn: () => listRecommendations() });
