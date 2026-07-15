@@ -11,6 +11,10 @@ import {
   Settings as SettingsIcon,
   LogOut,
   Languages,
+  TrendingUp,
+  FlaskConical,
+  Bot,
+  Brain,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated")({
@@ -33,6 +37,10 @@ function AuthedShell() {
     { to: "/dashboard", label: t.nav_dashboard, icon: LayoutDashboard },
     { to: "/daily", label: t.nav_daily, icon: ClipboardEdit },
     { to: "/priorities", label: t.nav_priorities, icon: Flame },
+    { to: "/forecast", label: t.nav_forecast, icon: TrendingUp },
+    { to: "/simulate", label: t.nav_simulate, icon: FlaskConical },
+    { to: "/assistant", label: t.nav_assistant, icon: Bot },
+    { to: "/learning", label: t.nav_learning, icon: Brain },
     { to: "/factory", label: t.nav_factory, icon: Factory },
     { to: "/decisions", label: t.nav_decisions, icon: ScrollText },
     { to: "/settings", label: t.nav_settings, icon: SettingsIcon },

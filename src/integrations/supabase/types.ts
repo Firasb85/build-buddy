@@ -517,6 +517,195 @@ export type Database = {
         }
         Relationships: []
       }
+      forecast_runs: {
+        Row: {
+          confidence: number
+          driver_notes: Json | null
+          high_estimate: number | null
+          horizon: Database["public"]["Enums"]["forecast_horizon"]
+          id: string
+          low_estimate: number | null
+          metric: Database["public"]["Enums"]["forecast_metric"]
+          point_estimate: number
+          run_at: string
+          scenario: Database["public"]["Enums"]["forecast_scenario"]
+          subject: string
+        }
+        Insert: {
+          confidence?: number
+          driver_notes?: Json | null
+          high_estimate?: number | null
+          horizon: Database["public"]["Enums"]["forecast_horizon"]
+          id?: string
+          low_estimate?: number | null
+          metric: Database["public"]["Enums"]["forecast_metric"]
+          point_estimate: number
+          run_at?: string
+          scenario: Database["public"]["Enums"]["forecast_scenario"]
+          subject: string
+        }
+        Update: {
+          confidence?: number
+          driver_notes?: Json | null
+          high_estimate?: number | null
+          horizon?: Database["public"]["Enums"]["forecast_horizon"]
+          id?: string
+          low_estimate?: number | null
+          metric?: Database["public"]["Enums"]["forecast_metric"]
+          point_estimate?: number
+          run_at?: string
+          scenario?: Database["public"]["Enums"]["forecast_scenario"]
+          subject?: string
+        }
+        Relationships: []
+      }
+      alert_states: {
+        Row: {
+          created_at: string
+          detail_ar: string | null
+          detail_en: string | null
+          dismissed_at: string | null
+          dismissed_by: string | null
+          id: string
+          kind: Database["public"]["Enums"]["alert_kind"]
+          metric_value: number | null
+          severity: Database["public"]["Enums"]["alert_severity"]
+          subject_id: string
+          subject_kind: string
+          threshold_value: number | null
+          title_ar: string
+          title_en: string
+        }
+        Insert: {
+          created_at?: string
+          detail_ar?: string | null
+          detail_en?: string | null
+          dismissed_at?: string | null
+          dismissed_by?: string | null
+          id?: string
+          kind: Database["public"]["Enums"]["alert_kind"]
+          metric_value?: number | null
+          severity: Database["public"]["Enums"]["alert_severity"]
+          subject_id: string
+          subject_kind: string
+          threshold_value?: number | null
+          title_ar: string
+          title_en: string
+        }
+        Update: {
+          created_at?: string
+          detail_ar?: string | null
+          detail_en?: string | null
+          dismissed_at?: string | null
+          dismissed_by?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["alert_kind"]
+          metric_value?: number | null
+          severity?: Database["public"]["Enums"]["alert_severity"]
+          subject_id?: string
+          subject_kind?: string
+          threshold_value?: number | null
+          title_ar?: string
+          title_en?: string
+        }
+        Relationships: []
+      }
+      learning_signals: {
+        Row: {
+          accuracy_score: number | null
+          component_dominant: number | null
+          created_at: string
+          id: string
+          objective: string | null
+          product_id: string | null
+          recommendation_id: string | null
+          signal: string
+          user_id: string | null
+          weight_snapshot: Json | null
+        }
+        Insert: {
+          accuracy_score?: number | null
+          component_dominant?: number | null
+          created_at?: string
+          id?: string
+          objective?: string | null
+          product_id?: string | null
+          recommendation_id?: string | null
+          signal: string
+          user_id?: string | null
+          weight_snapshot?: Json | null
+        }
+        Update: {
+          accuracy_score?: number | null
+          component_dominant?: number | null
+          created_at?: string
+          id?: string
+          objective?: string | null
+          product_id?: string | null
+          recommendation_id?: string | null
+          signal?: string
+          user_id?: string | null
+          weight_snapshot?: Json | null
+        }
+        Relationships: []
+      }
+      simulation_runs: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          label_ar: string | null
+          label_en: string | null
+          params: Json
+          result: Json
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          label_ar?: string | null
+          label_en?: string | null
+          params: Json
+          result: Json
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          label_ar?: string | null
+          label_en?: string | null
+          params?: Json
+          result?: Json
+        }
+        Relationships: []
+      }
+      assistant_messages: {
+        Row: {
+          content: string
+          context_snapshot: Json | null
+          created_at: string
+          id: string
+          role: string
+          user_id: string | null
+        }
+        Insert: {
+          content: string
+          context_snapshot?: Json | null
+          created_at?: string
+          id?: string
+          role: string
+          user_id?: string | null
+        }
+        Update: {
+          content?: string
+          context_snapshot?: Json | null
+          created_at?: string
+          id?: string
+          role?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -531,6 +720,17 @@ export type Database = {
       }
     }
     Enums: {
+      alert_kind:
+        | "stockout"
+        | "overstock"
+        | "dead_stock"
+        | "low_readiness"
+        | "line_down"
+        | "demand_anomaly"
+        | "yield_drop"
+        | "reorder_needed"
+        | "cash_risk"
+      alert_severity: "info" | "warning" | "critical"
       app_role: "admin" | "manager" | "operator"
       business_objective:
         | "maximize_profit"
@@ -538,6 +738,9 @@ export type Database = {
         | "reduce_inventory"
         | "protect_cash"
         | "default"
+      forecast_horizon: "7d" | "4w" | "3m"
+      forecast_metric: "demand" | "inventory" | "cash"
+      forecast_scenario: "optimistic" | "likely" | "pessimistic"
       line_status: "running" | "setup" | "idle" | "broken" | "maintenance"
       order_status:
         | "received"
@@ -674,6 +877,18 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      alert_kind: [
+        "stockout",
+        "overstock",
+        "dead_stock",
+        "low_readiness",
+        "line_down",
+        "demand_anomaly",
+        "yield_drop",
+        "reorder_needed",
+        "cash_risk",
+      ],
+      alert_severity: ["info", "warning", "critical"],
       app_role: ["admin", "manager", "operator"],
       business_objective: [
         "maximize_profit",
@@ -682,6 +897,9 @@ export const Constants = {
         "protect_cash",
         "default",
       ],
+      forecast_horizon: ["7d", "4w", "3m"],
+      forecast_metric: ["demand", "inventory", "cash"],
+      forecast_scenario: ["optimistic", "likely", "pessimistic"],
       line_status: ["running", "setup", "idle", "broken", "maintenance"],
       order_status: [
         "received",

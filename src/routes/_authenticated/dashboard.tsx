@@ -8,7 +8,9 @@ import { listRecommendations, decideRecommendation } from "@/lib/decisions.funct
 import { generateBriefing } from "@/lib/briefing.functions";
 import { getObjective } from "@/lib/objective.functions";
 import { useI18n, pickName } from "@/hooks/use-i18n";
-import { Activity, AlertTriangle, RefreshCw, Sparkles, Check, X } from "lucide-react";
+import { Activity, AlertTriangle, RefreshCw, Sparkles, Check, X, TrendingUp, Brain, Bot, BarChart3, FlaskConical, Zap } from "lucide-react";
+import { AlertsPanel } from "@/components/alerts-panel";
+import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: DashboardWrapper,
@@ -103,6 +105,14 @@ function Dashboard() {
         <KPI label={t.kpi_stock_days} value={stockDays} suffix="d" />
         <KPI label={t.kpi_open_orders} value={String(activeRecos.length)} />
         <KPI label={t.kpi_top_bottleneck} value={String(constrainedCount)} suffix={t.constraint_blocked} accent={constrainedCount > 0} />
+      </div>
+
+      {/* AI Agents — Phase 2 quick links */}
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <AgentCard to="/forecast" icon={TrendingUp} title={t.nav_forecast} subtitle={t.forecast_desc} />
+        <AgentCard to="/simulate" icon={FlaskConical} title={t.nav_simulate} subtitle={t.simulate_desc} />
+        <AgentCard to="/assistant" icon={Bot} title={t.nav_assistant} subtitle={t.assistant_desc} />
+        <AgentCard to="/learning" icon={Brain} title={t.nav_learning} subtitle={t.learning_desc} />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
@@ -223,6 +233,9 @@ function Dashboard() {
           </table>
         </div>
       </section>
+
+      {/* Alerts panel */}
+      <AlertsPanel />
     </div>
   );
 }
@@ -236,5 +249,24 @@ function KPI({ label, value, suffix, accent }: { label: string; value: string; s
         {suffix && <span className="text-sm text-muted-foreground">{suffix}</span>}
       </div>
     </div>
+  );
+}
+
+function AgentCard({ to, icon: Icon, title, subtitle }: { to: string; icon: typeof TrendingUp; title: string; subtitle: string }) {
+  return (
+    <Link
+      to={to}
+      className="card-panel p-4 group hover:border-primary/60 hover:bg-surface-2/40 transition"
+    >
+      <div className="flex items-center gap-3">
+        <div className="grid h-9 w-9 place-items-center rounded-md bg-primary/10 text-primary group-hover:bg-primary/20">
+          <Icon className="h-4 w-4" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="text-sm font-semibold truncate">{title}</div>
+          <div className="text-xs text-muted-foreground line-clamp-2">{subtitle}</div>
+        </div>
+      </div>
+    </Link>
   );
 }

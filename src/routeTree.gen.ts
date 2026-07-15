@@ -13,11 +13,15 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthenticatedSimulateRouteImport } from './routes/_authenticated/simulate'
 import { Route as AuthenticatedPrioritiesRouteImport } from './routes/_authenticated/priorities'
+import { Route as AuthenticatedLearningRouteImport } from './routes/_authenticated/learning'
 import { Route as AuthenticatedFactoryRouteImport } from './routes/_authenticated/factory'
+import { Route as AuthenticatedForecastRouteImport } from './routes/_authenticated/forecast'
 import { Route as AuthenticatedDecisionsRouteImport } from './routes/_authenticated/decisions'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedDailyRouteImport } from './routes/_authenticated/daily'
+import { Route as AuthenticatedAssistantRouteImport } from './routes/_authenticated/assistant'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -38,14 +42,29 @@ const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedSimulateRoute = AuthenticatedSimulateRouteImport.update({
+  id: '/simulate',
+  path: '/simulate',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedPrioritiesRoute = AuthenticatedPrioritiesRouteImport.update({
   id: '/priorities',
   path: '/priorities',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedLearningRoute = AuthenticatedLearningRouteImport.update({
+  id: '/learning',
+  path: '/learning',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedFactoryRoute = AuthenticatedFactoryRouteImport.update({
   id: '/factory',
   path: '/factory',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedForecastRoute = AuthenticatedForecastRouteImport.update({
+  id: '/forecast',
+  path: '/forecast',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedDecisionsRoute = AuthenticatedDecisionsRouteImport.update({
@@ -63,71 +82,100 @@ const AuthenticatedDailyRoute = AuthenticatedDailyRouteImport.update({
   path: '/daily',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAssistantRoute = AuthenticatedAssistantRouteImport.update({
+  id: '/assistant',
+  path: '/assistant',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/assistant': typeof AuthenticatedAssistantRoute
   '/auth': typeof AuthRoute
   '/daily': typeof AuthenticatedDailyRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/decisions': typeof AuthenticatedDecisionsRoute
   '/factory': typeof AuthenticatedFactoryRoute
+  '/forecast': typeof AuthenticatedForecastRoute
+  '/learning': typeof AuthenticatedLearningRoute
   '/priorities': typeof AuthenticatedPrioritiesRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/simulate': typeof AuthenticatedSimulateRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/assistant': typeof AuthenticatedAssistantRoute
   '/auth': typeof AuthRoute
   '/daily': typeof AuthenticatedDailyRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/decisions': typeof AuthenticatedDecisionsRoute
   '/factory': typeof AuthenticatedFactoryRoute
+  '/forecast': typeof AuthenticatedForecastRoute
+  '/learning': typeof AuthenticatedLearningRoute
   '/priorities': typeof AuthenticatedPrioritiesRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/simulate': typeof AuthenticatedSimulateRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/assistant': typeof AuthenticatedAssistantRoute
   '/auth': typeof AuthRoute
-  '/_authenticated/daily': typeof AuthenticatedDailyRoute
-  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
-  '/_authenticated/decisions': typeof AuthenticatedDecisionsRoute
-  '/_authenticated/factory': typeof AuthenticatedFactoryRoute
-  '/_authenticated/priorities': typeof AuthenticatedPrioritiesRoute
-  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/daily': typeof AuthenticatedDailyRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
+  '/decisions': typeof AuthenticatedDecisionsRoute
+  '/factory': typeof AuthenticatedFactoryRoute
+  '/forecast': typeof AuthenticatedForecastRoute
+  '/learning': typeof AuthenticatedLearningRoute
+  '/priorities': typeof AuthenticatedPrioritiesRoute
+  '/settings': typeof AuthenticatedSettingsRoute
+  '/simulate': typeof AuthenticatedSimulateRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/assistant'
     | '/auth'
     | '/daily'
     | '/dashboard'
     | '/decisions'
     | '/factory'
+    | '/forecast'
+    | '/learning'
     | '/priorities'
     | '/settings'
+    | '/simulate'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/assistant'
     | '/auth'
     | '/daily'
     | '/dashboard'
     | '/decisions'
     | '/factory'
+    | '/forecast'
+    | '/learning'
     | '/priorities'
     | '/settings'
+    | '/simulate'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/assistant'
     | '/auth'
-    | '/_authenticated/daily'
-    | '/_authenticated/dashboard'
-    | '/_authenticated/decisions'
-    | '/_authenticated/factory'
-    | '/_authenticated/priorities'
-    | '/_authenticated/settings'
+    | '/daily'
+    | '/dashboard'
+    | '/decisions'
+    | '/factory'
+    | '/forecast'
+    | '/learning'
+    | '/priorities'
+    | '/settings'
+    | '/simulate'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -166,6 +214,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/simulate': {
+      id: '/_authenticated/simulate'
+      path: '/simulate'
+      fullPath: '/simulate'
+      preLoaderRoute: typeof AuthenticatedSimulateRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/priorities': {
       id: '/_authenticated/priorities'
       path: '/priorities'
@@ -173,11 +228,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPrioritiesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/learning': {
+      id: '/_authenticated/learning'
+      path: '/learning'
+      fullPath: '/learning'
+      preLoaderRoute: typeof AuthenticatedLearningRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/factory': {
       id: '/_authenticated/factory'
       path: '/factory'
       fullPath: '/factory'
       preLoaderRoute: typeof AuthenticatedFactoryRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/forecast': {
+      id: '/_authenticated/forecast'
+      path: '/forecast'
+      fullPath: '/forecast'
+      preLoaderRoute: typeof AuthenticatedForecastRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/decisions': {
@@ -201,6 +270,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDailyRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/assistant': {
+      id: '/_authenticated/assistant'
+      path: '/assistant'
+      fullPath: '/assistant'
+      preLoaderRoute: typeof AuthenticatedAssistantRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -211,6 +287,10 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedFactoryRoute: typeof AuthenticatedFactoryRoute
   AuthenticatedPrioritiesRoute: typeof AuthenticatedPrioritiesRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedSimulateRoute: typeof AuthenticatedSimulateRoute
+  AuthenticatedLearningRoute: typeof AuthenticatedLearningRoute
+  AuthenticatedForecastRoute: typeof AuthenticatedForecastRoute
+  AuthenticatedAssistantRoute: typeof AuthenticatedAssistantRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -220,6 +300,10 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedFactoryRoute: AuthenticatedFactoryRoute,
   AuthenticatedPrioritiesRoute: AuthenticatedPrioritiesRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedSimulateRoute: AuthenticatedSimulateRoute,
+  AuthenticatedLearningRoute: AuthenticatedLearningRoute,
+  AuthenticatedForecastRoute: AuthenticatedForecastRoute,
+  AuthenticatedAssistantRoute: AuthenticatedAssistantRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
