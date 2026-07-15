@@ -13,12 +13,15 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedSimulateRouteImport } from './routes/_authenticated/simulate'
+import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
 import { Route as AuthenticatedProductsRouteImport } from './routes/_authenticated/products'
 import { Route as AuthenticatedPrioritiesRouteImport } from './routes/_authenticated/priorities'
 import { Route as AuthenticatedOrdersRouteImport } from './routes/_authenticated/orders'
+import { Route as AuthenticatedOutputsRouteImport } from './routes/_authenticated/outputs'
 import { Route as AuthenticatedMaterialsRouteImport } from './routes/_authenticated/materials'
 import { Route as AuthenticatedLearningRouteImport } from './routes/_authenticated/learning'
 import { Route as AuthenticatedLinesRouteImport } from './routes/_authenticated/lines'
+import { Route as AuthenticatedInputsRouteImport } from './routes/_authenticated/inputs'
 import { Route as AuthenticatedFactoryRouteImport } from './routes/_authenticated/factory'
 import { Route as AuthenticatedForecastRouteImport } from './routes/_authenticated/forecast'
 import { Route as AuthenticatedDecisionsRouteImport } from './routes/_authenticated/decisions'
@@ -46,6 +49,11 @@ const AuthenticatedSimulateRoute = AuthenticatedSimulateRouteImport.update({
   path: '/simulate',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedReportsRoute = AuthenticatedReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedProductsRoute = AuthenticatedProductsRouteImport.update({
   id: '/products',
   path: '/products',
@@ -61,6 +69,11 @@ const AuthenticatedOrdersRoute = AuthenticatedOrdersRouteImport.update({
   path: '/orders',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedOutputsRoute = AuthenticatedOutputsRouteImport.update({
+  id: '/outputs',
+  path: '/outputs',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedMaterialsRoute = AuthenticatedMaterialsRouteImport.update({
   id: '/materials',
   path: '/materials',
@@ -74,6 +87,11 @@ const AuthenticatedLearningRoute = AuthenticatedLearningRouteImport.update({
 const AuthenticatedLinesRoute = AuthenticatedLinesRouteImport.update({
   id: '/lines',
   path: '/lines',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedInputsRoute = AuthenticatedInputsRouteImport.update({
+  id: '/inputs',
+  path: '/inputs',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedFactoryRoute = AuthenticatedFactoryRouteImport.update({
@@ -121,12 +139,15 @@ export interface FileRoutesByFullPath {
   '/decisions': typeof AuthenticatedDecisionsRoute
   '/factory': typeof AuthenticatedFactoryRoute
   '/forecast': typeof AuthenticatedForecastRoute
+  '/inputs': typeof AuthenticatedInputsRoute
   '/learning': typeof AuthenticatedLearningRoute
   '/lines': typeof AuthenticatedLinesRoute
   '/materials': typeof AuthenticatedMaterialsRoute
   '/orders': typeof AuthenticatedOrdersRoute
+  '/outputs': typeof AuthenticatedOutputsRoute
   '/priorities': typeof AuthenticatedPrioritiesRoute
   '/products': typeof AuthenticatedProductsRoute
+  '/reports': typeof AuthenticatedReportsRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/simulate': typeof AuthenticatedSimulateRoute
 }
@@ -139,12 +160,15 @@ export interface FileRoutesByTo {
   '/decisions': typeof AuthenticatedDecisionsRoute
   '/factory': typeof AuthenticatedFactoryRoute
   '/forecast': typeof AuthenticatedForecastRoute
+  '/inputs': typeof AuthenticatedInputsRoute
   '/learning': typeof AuthenticatedLearningRoute
   '/lines': typeof AuthenticatedLinesRoute
   '/materials': typeof AuthenticatedMaterialsRoute
   '/orders': typeof AuthenticatedOrdersRoute
+  '/outputs': typeof AuthenticatedOutputsRoute
   '/priorities': typeof AuthenticatedPrioritiesRoute
   '/products': typeof AuthenticatedProductsRoute
+  '/reports': typeof AuthenticatedReportsRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/simulate': typeof AuthenticatedSimulateRoute
 }
@@ -159,12 +183,15 @@ export interface FileRoutesById {
   '/decisions': typeof AuthenticatedDecisionsRoute
   '/factory': typeof AuthenticatedFactoryRoute
   '/forecast': typeof AuthenticatedForecastRoute
+  '/inputs': typeof AuthenticatedInputsRoute
   '/learning': typeof AuthenticatedLearningRoute
   '/lines': typeof AuthenticatedLinesRoute
   '/materials': typeof AuthenticatedMaterialsRoute
   '/orders': typeof AuthenticatedOrdersRoute
+  '/outputs': typeof AuthenticatedOutputsRoute
   '/priorities': typeof AuthenticatedPrioritiesRoute
   '/products': typeof AuthenticatedProductsRoute
+  '/reports': typeof AuthenticatedReportsRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/simulate': typeof AuthenticatedSimulateRoute
 }
@@ -179,12 +206,15 @@ export interface FileRouteTypes {
     | '/decisions'
     | '/factory'
     | '/forecast'
+    | '/inputs'
     | '/learning'
     | '/lines'
     | '/materials'
     | '/orders'
+    | '/outputs'
     | '/priorities'
     | '/products'
+    | '/reports'
     | '/settings'
     | '/simulate'
   fileRoutesByTo: FileRoutesByTo
@@ -197,12 +227,15 @@ export interface FileRouteTypes {
     | '/decisions'
     | '/factory'
     | '/forecast'
+    | '/inputs'
     | '/learning'
     | '/lines'
     | '/materials'
     | '/orders'
+    | '/outputs'
     | '/priorities'
     | '/products'
+    | '/reports'
     | '/settings'
     | '/simulate'
   id:
@@ -216,12 +249,15 @@ export interface FileRouteTypes {
     | '/decisions'
     | '/factory'
     | '/forecast'
+    | '/inputs'
     | '/learning'
     | '/lines'
     | '/materials'
     | '/orders'
+    | '/outputs'
     | '/priorities'
     | '/products'
+    | '/reports'
     | '/settings'
     | '/simulate'
   fileRoutesById: FileRoutesById
@@ -261,6 +297,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSimulateRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/reports': {
+      id: '/_authenticated/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof AuthenticatedReportsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/products': {
       id: '/_authenticated/products'
       path: '/products'
@@ -282,6 +325,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrdersRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/outputs': {
+      id: '/_authenticated/outputs'
+      path: '/outputs'
+      fullPath: '/outputs'
+      preLoaderRoute: typeof AuthenticatedOutputsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/materials': {
       id: '/_authenticated/materials'
       path: '/materials'
@@ -301,6 +351,13 @@ declare module '@tanstack/react-router' {
       path: '/lines'
       fullPath: '/lines'
       preLoaderRoute: typeof AuthenticatedLinesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/inputs': {
+      id: '/_authenticated/inputs'
+      path: '/inputs'
+      fullPath: '/inputs'
+      preLoaderRoute: typeof AuthenticatedInputsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/factory': {
@@ -363,12 +420,15 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDecisionsRoute: typeof AuthenticatedDecisionsRoute
   AuthenticatedFactoryRoute: typeof AuthenticatedFactoryRoute
   AuthenticatedForecastRoute: typeof AuthenticatedForecastRoute
+  AuthenticatedInputsRoute: typeof AuthenticatedInputsRoute
   AuthenticatedLearningRoute: typeof AuthenticatedLearningRoute
   AuthenticatedLinesRoute: typeof AuthenticatedLinesRoute
   AuthenticatedMaterialsRoute: typeof AuthenticatedMaterialsRoute
   AuthenticatedOrdersRoute: typeof AuthenticatedOrdersRoute
+  AuthenticatedOutputsRoute: typeof AuthenticatedOutputsRoute
   AuthenticatedPrioritiesRoute: typeof AuthenticatedPrioritiesRoute
   AuthenticatedProductsRoute: typeof AuthenticatedProductsRoute
+  AuthenticatedReportsRoute: typeof AuthenticatedReportsRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedSimulateRoute: typeof AuthenticatedSimulateRoute
 }
@@ -381,12 +441,15 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDecisionsRoute: AuthenticatedDecisionsRoute,
   AuthenticatedFactoryRoute: AuthenticatedFactoryRoute,
   AuthenticatedForecastRoute: AuthenticatedForecastRoute,
+  AuthenticatedInputsRoute: AuthenticatedInputsRoute,
   AuthenticatedLearningRoute: AuthenticatedLearningRoute,
   AuthenticatedLinesRoute: AuthenticatedLinesRoute,
   AuthenticatedMaterialsRoute: AuthenticatedMaterialsRoute,
   AuthenticatedOrdersRoute: AuthenticatedOrdersRoute,
+  AuthenticatedOutputsRoute: AuthenticatedOutputsRoute,
   AuthenticatedPrioritiesRoute: AuthenticatedPrioritiesRoute,
   AuthenticatedProductsRoute: AuthenticatedProductsRoute,
+  AuthenticatedReportsRoute: AuthenticatedReportsRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedSimulateRoute: AuthenticatedSimulateRoute,
 }

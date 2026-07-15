@@ -17,7 +17,11 @@ import {
   Cpu,
   Users,
   ShoppingCart,
+  FileInput,
+  FileOutput,
+  FileText,
 } from "lucide-react";
+import { FactorySwitcher } from "@/components/factory-switcher";
 
 export const Route = createFileRoute("/_authenticated")({
   component: AuthedShell,
@@ -35,6 +39,9 @@ function AuthedShell() {
     { to: "/simulate", label: t.nav_simulate, icon: FlaskConical },
     { to: "/assistant", label: t.nav_assistant, icon: Bot },
     { to: "/learning", label: t.nav_learning, icon: Brain },
+    { to: "/inputs", label: lang === "ar" ? "المدخلات" : "Inputs", icon: FileInput },
+    { to: "/outputs", label: lang === "ar" ? "المخرجات" : "Outputs", icon: FileOutput },
+    { to: "/reports", label: lang === "ar" ? "التقارير" : "Reports", icon: FileText },
     { to: "/products", label: t.nav_products_crud, icon: Package },
     { to: "/materials", label: t.nav_materials_crud, icon: Boxes },
     { to: "/lines", label: t.nav_lines_crud, icon: Cpu },
@@ -55,7 +62,8 @@ function AuthedShell() {
             <div className="text-[10px] uppercase tracking-widest text-muted-foreground truncate">{t.appTagline}</div>
           </div>
         </div>
-        <nav className="flex-1 p-3 space-y-1">
+        <FactorySwitcher />
+        <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
           {items.map((i) => {
             const active = pathname === i.to || pathname.startsWith(i.to + "/");
             return (
