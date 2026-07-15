@@ -37,11 +37,7 @@ function AuthedShell() {
     { to: "/dashboard", label: t.nav_dashboard, icon: LayoutDashboard },
     { to: "/daily", label: t.nav_daily, icon: ClipboardEdit },
     { to: "/priorities", label: t.nav_priorities, icon: Flame },
-    { to: "/products", label: t.nav_products, icon: Package },
-    { to: "/materials", label: t.nav_materials, icon: Boxes },
-    { to: "/lines", label: t.nav_lines, icon: Factory },
-    { to: "/customers", label: t.nav_customers, icon: Users },
-    { to: "/orders", label: t.nav_orders, icon: ShoppingCart },
+    { to: "/factory", label: t.nav_factory, icon: Factory },
     { to: "/decisions", label: t.nav_decisions, icon: ScrollText },
     { to: "/settings", label: t.nav_settings, icon: SettingsIcon },
   ] as const;
