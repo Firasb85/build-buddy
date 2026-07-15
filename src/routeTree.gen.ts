@@ -14,6 +14,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedPrioritiesRouteImport } from './routes/_authenticated/priorities'
+import { Route as AuthenticatedFactoryRouteImport } from './routes/_authenticated/factory'
 import { Route as AuthenticatedDecisionsRouteImport } from './routes/_authenticated/decisions'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedDailyRouteImport } from './routes/_authenticated/daily'
@@ -42,6 +43,11 @@ const AuthenticatedPrioritiesRoute = AuthenticatedPrioritiesRouteImport.update({
   path: '/priorities',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedFactoryRoute = AuthenticatedFactoryRouteImport.update({
+  id: '/factory',
+  path: '/factory',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDecisionsRoute = AuthenticatedDecisionsRouteImport.update({
   id: '/decisions',
   path: '/decisions',
@@ -64,6 +70,7 @@ export interface FileRoutesByFullPath {
   '/daily': typeof AuthenticatedDailyRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/decisions': typeof AuthenticatedDecisionsRoute
+  '/factory': typeof AuthenticatedFactoryRoute
   '/priorities': typeof AuthenticatedPrioritiesRoute
   '/settings': typeof AuthenticatedSettingsRoute
 }
@@ -73,6 +80,7 @@ export interface FileRoutesByTo {
   '/daily': typeof AuthenticatedDailyRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/decisions': typeof AuthenticatedDecisionsRoute
+  '/factory': typeof AuthenticatedFactoryRoute
   '/priorities': typeof AuthenticatedPrioritiesRoute
   '/settings': typeof AuthenticatedSettingsRoute
 }
@@ -84,6 +92,7 @@ export interface FileRoutesById {
   '/_authenticated/daily': typeof AuthenticatedDailyRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/decisions': typeof AuthenticatedDecisionsRoute
+  '/_authenticated/factory': typeof AuthenticatedFactoryRoute
   '/_authenticated/priorities': typeof AuthenticatedPrioritiesRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
 }
@@ -95,6 +104,7 @@ export interface FileRouteTypes {
     | '/daily'
     | '/dashboard'
     | '/decisions'
+    | '/factory'
     | '/priorities'
     | '/settings'
   fileRoutesByTo: FileRoutesByTo
@@ -104,6 +114,7 @@ export interface FileRouteTypes {
     | '/daily'
     | '/dashboard'
     | '/decisions'
+    | '/factory'
     | '/priorities'
     | '/settings'
   id:
@@ -114,6 +125,7 @@ export interface FileRouteTypes {
     | '/_authenticated/daily'
     | '/_authenticated/dashboard'
     | '/_authenticated/decisions'
+    | '/_authenticated/factory'
     | '/_authenticated/priorities'
     | '/_authenticated/settings'
   fileRoutesById: FileRoutesById
@@ -161,6 +173,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPrioritiesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/factory': {
+      id: '/_authenticated/factory'
+      path: '/factory'
+      fullPath: '/factory'
+      preLoaderRoute: typeof AuthenticatedFactoryRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/decisions': {
       id: '/_authenticated/decisions'
       path: '/decisions'
@@ -189,6 +208,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedDailyRoute: typeof AuthenticatedDailyRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedDecisionsRoute: typeof AuthenticatedDecisionsRoute
+  AuthenticatedFactoryRoute: typeof AuthenticatedFactoryRoute
   AuthenticatedPrioritiesRoute: typeof AuthenticatedPrioritiesRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
 }
@@ -197,6 +217,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedDailyRoute: AuthenticatedDailyRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedDecisionsRoute: AuthenticatedDecisionsRoute,
+  AuthenticatedFactoryRoute: AuthenticatedFactoryRoute,
   AuthenticatedPrioritiesRoute: AuthenticatedPrioritiesRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
 }

@@ -55,12 +55,11 @@ function FactoryPage() {
             id: m.id,
             cols: [
               pickName(m, lang),
-              m.sku,
               <span className="tabular-nums">{Number(m.stock_qty)} {m.unit}</span>,
               <span className="tabular-nums">{m.lead_time_days}d</span>,
             ],
           }))}
-          headers={[t.material, "SKU", t.stock, t.lead_time]}
+          headers={[t.material, t.stock, t.lead_time]}
         />
       </Panel>
 
@@ -71,7 +70,7 @@ function FactoryPage() {
             cols: [
               pickName(l, lang),
               <span className="tabular-nums">{(Number(l.quality_factor) * 100).toFixed(0)}%</span>,
-              <span className="tabular-nums">{Number(l.capacity_units_per_day)}</span>,
+              <span className="tabular-nums">{Number(l.capacity_per_hour)}/h</span>,
               <span className={l.status === "running" ? "text-success" : "text-warning"}>{l.status}</span>,
             ],
           }))}
@@ -86,10 +85,10 @@ function FactoryPage() {
             cols: [
               pickName(c, lang),
               <span className="tabular-nums">{c.importance}/10</span>,
-              c.contract_type ?? "—",
+              <span className="tabular-nums">{(Number(c.churn_risk) * 100).toFixed(0)}%</span>,
             ],
           }))}
-          headers={[t.customer, t.importance, t.contract]}
+          headers={[t.customer, t.importance, t.churn_risk]}
         />
       </Panel>
 
