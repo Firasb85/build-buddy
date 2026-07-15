@@ -1,8 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
 import { useState, useRef, useEffect } from "react";
-import { askAssistant, listAssistantHistory } from "@/lib/assistant.functions";
+import { askAssistant, listAssistantHistory } from "@/lib/local-api";
 import { useI18n } from "@/hooks/use-i18n";
 import { Send, Bot, User as UserIcon, Sparkles } from "lucide-react";
 
@@ -20,14 +19,13 @@ interface ChatMessage {
 function AssistantPage() {
   const { t, lang } = useI18n();
   const qc = useQueryClient();
-  const askFn = useServerFn(askAssistant);
   const history = useQuery({ queryKey: ["assistant-history"], queryFn: () => listAssistantHistory() });
   const [input, setInput] = useState("");
   const [pending, setPending] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const send = useMutation({
-    mutationFn: (q: string) => askFn({ data: { question: q, lang } }),
+    mutationFn: (q: string) => askAssistant({ question: q, lang }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["assistant-history"] }),
     onSettled: () => setPending(false),
   });

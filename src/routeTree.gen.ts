@@ -9,7 +9,6 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
@@ -28,11 +27,6 @@ import { Route as AuthenticatedDailyRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedCustomersRouteImport } from './routes/_authenticated/customers'
 import { Route as AuthenticatedAssistantRouteImport } from './routes/_authenticated/assistant'
 
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
@@ -121,7 +115,6 @@ const AuthenticatedAssistantRoute = AuthenticatedAssistantRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/assistant': typeof AuthenticatedAssistantRoute
-  '/auth': typeof AuthRoute
   '/customers': typeof AuthenticatedCustomersRoute
   '/daily': typeof AuthenticatedDailyRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -140,7 +133,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/assistant': typeof AuthenticatedAssistantRoute
-  '/auth': typeof AuthRoute
   '/customers': typeof AuthenticatedCustomersRoute
   '/daily': typeof AuthenticatedDailyRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -161,7 +153,6 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/assistant': typeof AuthenticatedAssistantRoute
-  '/auth': typeof AuthRoute
   '/customers': typeof AuthenticatedCustomersRoute
   '/daily': typeof AuthenticatedDailyRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
@@ -182,7 +173,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/assistant'
-    | '/auth'
     | '/customers'
     | '/daily'
     | '/dashboard'
@@ -201,7 +191,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/assistant'
-    | '/auth'
     | '/customers'
     | '/daily'
     | '/dashboard'
@@ -221,7 +210,6 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/assistant'
-    | '/auth'
     | '/customers'
     | '/daily'
     | '/dashboard'
@@ -241,18 +229,10 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
-  AuthRoute: typeof AuthRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_authenticated': {
       id: '/_authenticated'
       path: ''
@@ -417,7 +397,6 @@ const AuthenticatedRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
-  AuthRoute: AuthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

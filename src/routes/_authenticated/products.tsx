@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Plus, Edit, Trash2 } from "lucide-react";
-import { listProducts, listLines, saveProduct, deleteProduct } from "@/lib/factory.functions";
+import { listProducts, listLines, saveProduct, deleteProduct } from "@/lib/local-api";
 import { useI18n, pickName } from "@/hooks/use-i18n";
 import { EntityDrawer, PageHeader, type DrawerField } from "@/components/entity-drawer";
 import { useEntityList } from "@/hooks/use-entity-list";

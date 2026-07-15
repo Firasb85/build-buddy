@@ -1,8 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
-import { getLatestPPS, runPPS } from "@/lib/pps.functions";
-import { getObjective, setObjective } from "@/lib/objective.functions";
+import { getLatestPPS, runPPS, getObjective, setObjective } from "@/lib/local-api";
 import { useI18n, pickName } from "@/hooks/use-i18n";
 import { RefreshCw, AlertTriangle } from "lucide-react";
 
@@ -15,20 +13,18 @@ const OBJS = ["default", "maximize_profit", "maximize_service", "reduce_inventor
 function PrioritiesPage() {
   const { t, lang } = useI18n();
   const qc = useQueryClient();
-  const runFn = useServerFn(runPPS);
-  const setObjFn = useServerFn(setObjective);
   const pps = useQuery({ queryKey: ["pps-latest"], queryFn: () => getLatestPPS() });
   const obj = useQuery({ queryKey: ["objective"], queryFn: () => getObjective() });
 
   const compute = useMutation({
-    mutationFn: () => runFn(),
+    mutationFn: () => runPPS(),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["pps-latest"] }),
   });
   const changeObj = useMutation({
-    mutationFn: (o: (typeof OBJS)[number]) => setObjFn({ data: { objective: o } }),
+    mutationFn: (o: (typeof OBJS)[number]) => setObjective({ objective: o }),
     onSuccess: async () => {
       await qc.invalidateQueries({ queryKey: ["objective"] });
-      await runFn();
+      await runPPS();
       qc.invalidateQueries({ queryKey: ["pps-latest"] });
     },
   });
@@ -61,7 +57,7 @@ function PrioritiesPage() {
                     : "border-border text-muted-foreground hover:bg-surface-2 hover:text-foreground")
                 }
               >
-                {t[`obj_${o}`]}
+                {t[`obj_${o}` as keyof typeof t]}
               </button>
             );
           })}
@@ -86,20 +82,20 @@ function PrioritiesPage() {
             </thead>
             <tbody>
               {rows.map((r) => {
-                const p = (r as { products?: { name_ar: string; name_en: string; sku: string } }).products;
+                const p = r.product;
                 return (
                   <tr key={r.product_id} className="border-t border-border">
                     <td className="py-3">
                       <div className="font-medium">{p ? pickName(p, lang) : "—"}</div>
                       <div className="text-xs text-muted-foreground">{p?.sku}</div>
                     </td>
-                    <td className="text-end font-semibold tabular-nums">{r.pps}</td>
-                    <td className="text-end hidden md:table-cell tabular-nums">{r.components.stockout_risk}</td>
-                    <td className="text-end hidden md:table-cell tabular-nums">{r.components.profit_impact}</td>
-                    <td className="text-end hidden md:table-cell tabular-nums">{r.components.customer_importance}</td>
-                    <td className="text-end hidden lg:table-cell tabular-nums">{r.components.line_efficiency}</td>
-                    <td className="text-end hidden lg:table-cell tabular-nums">{r.components.material_readiness}</td>
-                    <td className="text-end hidden lg:table-cell tabular-nums">{r.components.strategic_weight}</td>
+                    <td className="text-end font-semibold tabular-nums">{r.pps.toFixed(0)}</td>
+                    <td className="text-end hidden md:table-cell tabular-nums">{r.components.stockout_risk.toFixed(0)}</td>
+                    <td className="text-end hidden md:table-cell tabular-nums">{r.components.profit_impact.toFixed(0)}</td>
+                    <td className="text-end hidden md:table-cell tabular-nums">{r.components.customer_importance.toFixed(0)}</td>
+                    <td className="text-end hidden lg:table-cell tabular-nums">{r.components.line_efficiency.toFixed(0)}</td>
+                    <td className="text-end hidden lg:table-cell tabular-nums">{r.components.material_readiness.toFixed(0)}</td>
+                    <td className="text-end hidden lg:table-cell tabular-nums">{r.components.strategic_weight.toFixed(0)}</td>
                     <td className="text-end">
                       {r.constraint_status === "constrained" ? (
                         <span className="inline-flex items-center gap-1 text-warning text-xs">

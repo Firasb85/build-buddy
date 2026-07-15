@@ -30,8 +30,8 @@ function Landing() {
             <Languages className="h-4 w-4" />
             <span className="text-xs">{lang === "ar" ? "EN" : "ع"}</span>
           </button>
-          <Link to="/auth" className="btn-primary">
-            {t.cta_login}
+          <Link to="/dashboard" className="btn-primary">
+            {t.cta_start}
           </Link>
         </div>
       </header>
@@ -47,7 +47,7 @@ function Landing() {
             </h1>
             <p className="mt-5 max-w-xl text-lg text-muted-foreground">{t.hero_sub}</p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/auth" className="btn-primary">
+              <Link to="/dashboard" className="btn-primary">
                 {t.cta_start}
               </Link>
               <a href="#features" className="btn-ghost">

@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useI18n, pickName } from "@/hooks/use-i18n";
 import { useQuery } from "@tanstack/react-query";
-import { listProducts, listMaterials, listLines, listCustomers, listOrders } from "@/lib/factory.functions";
+import { listProducts, listMaterials, listLines, listCustomers, listOrders } from "@/lib/local-api";
 import { Package, Boxes, Factory, Users, ShoppingCart } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";

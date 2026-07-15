@@ -1,8 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
-import { listProducts, listLines } from "@/lib/factory.functions";
-import { submitDailyEntry, listRecentDailyEntries } from "@/lib/daily.functions";
+import { listProducts, listLines, submitDailyEntry, listRecentDailyEntries } from "@/lib/local-api";
 import { useI18n, pickName } from "@/hooks/use-i18n";
 import { useState } from "react";
 import { ClipboardEdit } from "lucide-react";
@@ -17,7 +15,6 @@ function DailyPage() {
   const products = useQuery({ queryKey: ["products"], queryFn: () => listProducts() });
   const lines = useQuery({ queryKey: ["lines"], queryFn: () => listLines() });
   const entries = useQuery({ queryKey: ["daily-entries"], queryFn: () => listRecentDailyEntries() });
-  const submitFn = useServerFn(submitDailyEntry);
 
   const [productId, setProductId] = useState("");
   const [lineId, setLineId] = useState("");
@@ -29,16 +26,14 @@ function DailyPage() {
 
   const submit = useMutation({
     mutationFn: () =>
-      submitFn({
-        data: {
-          entry_date: new Date().toISOString().slice(0, 10),
-          product_id: productId,
-          line_id: lineId || null,
-          produced: Number(produced),
-          shipped: Number(shipped),
-          received_material_qty: Number(received),
-          notes: notes || null,
-        },
+      submitDailyEntry({
+        entry_date: new Date().toISOString().slice(0, 10),
+        product_id: productId,
+        line_id: lineId || null,
+        produced: Number(produced),
+        shipped: Number(shipped),
+        received_material_qty: Number(received),
+        notes: notes || null,
       }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["daily-entries"] });

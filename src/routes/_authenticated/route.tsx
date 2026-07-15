@@ -1,7 +1,5 @@
-import { createFileRoute, Outlet, redirect, Link, useNavigate, useRouterState } from "@tanstack/react-router";
-import { supabase } from "@/integrations/supabase/client";
+import { createFileRoute, Outlet, Link, useRouterState } from "@tanstack/react-router";
 import { useI18n } from "@/hooks/use-i18n";
-import { useQueryClient } from "@tanstack/react-query";
 import {
   LayoutDashboard,
   ClipboardEdit,
@@ -9,7 +7,6 @@ import {
   Factory,
   ScrollText,
   Settings as SettingsIcon,
-  LogOut,
   Languages,
   TrendingUp,
   FlaskConical,
@@ -23,19 +20,11 @@ import {
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated")({
-  ssr: false,
-  beforeLoad: async () => {
-    const { data, error } = await supabase.auth.getUser();
-    if (error || !data.user) throw redirect({ to: "/auth" });
-    return { user: data.user };
-  },
   component: AuthedShell,
 });
 
 function AuthedShell() {
   const { t, lang, setLang } = useI18n();
-  const nav = useNavigate();
-  const qc = useQueryClient();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   const items = [
@@ -55,13 +44,6 @@ function AuthedShell() {
     { to: "/decisions", label: t.nav_decisions, icon: ScrollText },
     { to: "/settings", label: t.nav_settings, icon: SettingsIcon },
   ] as const;
-
-  async function signOut() {
-    await qc.cancelQueries();
-    qc.clear();
-    await supabase.auth.signOut();
-    nav({ to: "/auth", replace: true });
-  }
 
   return (
     <div className="min-h-screen flex">
@@ -101,10 +83,6 @@ function AuthedShell() {
             <Languages className="h-4 w-4" />
             <span>{lang === "ar" ? "English" : "العربية"}</span>
           </button>
-          <button className="btn-ghost w-full !justify-start" onClick={signOut}>
-            <LogOut className="h-4 w-4" />
-            <span>{t.signout}</span>
-          </button>
         </div>
       </aside>
 
@@ -117,9 +95,6 @@ function AuthedShell() {
           <div className="flex gap-2">
             <button className="btn-ghost !px-2 !py-1" onClick={() => setLang(lang === "ar" ? "en" : "ar")}>
               <Languages className="h-4 w-4" />
-            </button>
-            <button className="btn-ghost !px-2 !py-1" onClick={signOut}>
-              <LogOut className="h-4 w-4" />
             </button>
           </div>
         </header>

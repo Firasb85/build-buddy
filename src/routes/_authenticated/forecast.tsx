@@ -1,10 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { runForecast, getLatestForecasts } from "@/lib/forecast.functions";
+import { runForecast, getLatestForecasts, listProducts } from "@/lib/local-api";
 import { useI18n, pickName } from "@/hooks/use-i18n";
-import { listProducts } from "@/lib/factory.functions";
 import { TrendingUp, TrendingDown, Sparkles, RefreshCw } from "lucide-react";
 import type { ScenarioForecast, ForecastResult } from "@/lib/forecast.server";
 
@@ -18,20 +16,19 @@ const HORIZONS = ["7d", "4w", "3m"] as const;
 function ForecastPage() {
   const { t, lang } = useI18n();
   const qc = useQueryClient();
-  const [metric, setMetric] = (useState<(typeof METRICS)[number]>("demand"));
-  const [horizon, setHorizon] = (useState<(typeof HORIZONS)[number]>("7d"));
-  const [productId, setProductId] = (useState<string>(""));
-  const runFn = useServerFn(runForecast);
+  const [metric, setMetric] = useState<(typeof METRICS)[number]>("demand");
+  const [horizon, setHorizon] = useState<(typeof HORIZONS)[number]>("7d");
+  const [productId, setProductId] = useState<string>("");
   const products = useQuery({ queryKey: ["products"], queryFn: () => listProducts() });
 
   const latest = useQuery({
     queryKey: ["forecast-latest", metric, horizon],
-    queryFn: () => getLatestForecasts({ data: { metric, horizon } }),
+    queryFn: () => getLatestForecasts({ metric, horizon }),
   });
 
   const compute = useMutation({
     mutationFn: () =>
-      runFn({ data: { metric, horizon, product_id: metric === "cash" ? null : productId || null } }),
+      runForecast({ metric, horizon, product_id: metric === "cash" ? null : productId || null }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["forecast-latest"] }),
   });
 
@@ -51,7 +48,7 @@ function ForecastPage() {
             <label className="label-text">{t.forecast_metric}</label>
             <select className="input-field" value={metric} onChange={(e) => setMetric(e.target.value as (typeof METRICS)[number])}>
               {METRICS.map((m) => (
-                <option key={m} value={m}>{t[`fm_${m}`]}</option>
+                <option key={m} value={m}>{t[`fm_${m}` as keyof typeof t]}</option>
               ))}
             </select>
           </div>
@@ -59,7 +56,7 @@ function ForecastPage() {
             <label className="label-text">{t.forecast_horizon}</label>
             <select className="input-field" value={horizon} onChange={(e) => setHorizon(e.target.value as (typeof HORIZONS)[number])}>
               {HORIZONS.map((h) => (
-                <option key={h} value={h}>{t[`fh_${h}`]}</option>
+                <option key={h} value={h}>{t[`fh_${h}` as keyof typeof t]}</option>
               ))}
             </select>
           </div>

@@ -1,9 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
 import { useState, useMemo } from "react";
-import { runSimulationHandler, listSimulationRuns } from "@/lib/simulate.functions";
-import { listProducts, listLines, listMaterials } from "@/lib/factory.functions";
+import { runSimulationHandler, listSimulationRuns, listProducts, listLines, listMaterials } from "@/lib/local-api";
 import { useI18n, pickName } from "@/hooks/use-i18n";
 import { Beaker, Play, AlertTriangle } from "lucide-react";
 
@@ -18,7 +16,6 @@ function SimulatePage() {
   const lines = useQuery({ queryKey: ["lines"], queryFn: () => listLines() });
   const materials = useQuery({ queryKey: ["materials"], queryFn: () => listMaterials() });
   const recent = useQuery({ queryKey: ["sim-recent"], queryFn: () => listSimulationRuns() });
-  const runFn = useServerFn(runSimulationHandler);
 
   const [horizon, setHorizon] = useState(14);
   const [cashInject, setCashInject] = useState(0);
@@ -29,19 +26,17 @@ function SimulatePage() {
 
   const compute = useMutation({
     mutationFn: () =>
-      runFn({
-        data: {
-          params: {
-            product_demand_delta_pct: demandDeltas,
-            product_production_delta_pct: prodDeltas,
-            line_capacity_delta_pct: {},
-            material_cost_delta_pct: {},
-            material_stock_delta: {},
-            cash_inject: cashInject,
-            line_out: lineOut || null,
-            shift_multiplier: shiftMult,
-            horizon_days: horizon,
-          },
+      runSimulationHandler({
+        params: {
+          product_demand_delta_pct: demandDeltas,
+          product_production_delta_pct: prodDeltas,
+          line_capacity_delta_pct: {},
+          material_cost_delta_pct: {},
+          material_stock_delta: {},
+          cash_inject: cashInject,
+          line_out: lineOut || null,
+          shift_multiplier: shiftMult,
+          horizon_days: horizon,
         },
       }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["sim-recent"] }),

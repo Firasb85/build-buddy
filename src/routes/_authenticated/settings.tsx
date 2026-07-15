@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
-import { getObjective, setObjective } from "@/lib/objective.functions";
+import { getObjective, setObjective } from "@/lib/local-api";
 import { useI18n } from "@/hooks/use-i18n";
 import { JobsPanel } from "@/components/jobs-panel";
 
@@ -15,9 +14,8 @@ function SettingsPage() {
   const { t, lang, setLang } = useI18n();
   const qc = useQueryClient();
   const obj = useQuery({ queryKey: ["objective"], queryFn: () => getObjective() });
-  const setObjFn = useServerFn(setObjective);
   const change = useMutation({
-    mutationFn: (o: (typeof OBJS)[number]) => setObjFn({ data: { objective: o } }),
+    mutationFn: (o: (typeof OBJS)[number]) => setObjective({ objective: o }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["objective"] }),
   });
 
@@ -52,7 +50,7 @@ function SettingsPage() {
                   : "border-border text-muted-foreground hover:bg-surface-2 hover:text-foreground")
               }
             >
-              {t[`obj_${o}`]}
+              {t[`obj_${o}` as keyof typeof t]}
             </button>
           ))}
         </div>

@@ -1,8 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { getWeeklyReview } from "@/lib/learning.functions";
+import { getWeeklyReview } from "@/lib/local-api";
 import { useI18n } from "@/hooks/use-i18n";
 import { Brain, Check, X, Edit3, Lightbulb } from "lucide-react";
 
@@ -18,10 +17,9 @@ const COMPONENT_LABELS_EN = ["Stockout risk", "Profit impact", "Customer importa
 function LearningPage() {
   const { t, lang } = useI18n();
   const [objective, setObjective] = useState<(typeof OBJS)[number]>("default");
-  const reviewFn = useServerFn(getWeeklyReview);
   const review = useQuery({
     queryKey: ["learning-review", objective],
-    queryFn: () => reviewFn({ data: { objective } }),
+    queryFn: () => getWeeklyReview({ objective }),
   });
 
   const compLabels = lang === "ar" ? COMPONENT_LABELS_AR : COMPONENT_LABELS_EN;
@@ -54,7 +52,7 @@ function LearningPage() {
                   : "border-border text-muted-foreground hover:bg-surface-2 hover:text-foreground")
               }
             >
-              {t[`obj_${o}`]}
+              {t[`obj_${o}` as keyof typeof t]}
             </button>
           ))}
         </div>

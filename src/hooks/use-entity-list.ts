@@ -1,41 +1,32 @@
 // Generic hook for an entity list page: load + create + update + delete
-// using TanStack Query + a server fn pair. The user only supplies the
-// server functions and a query key.
+// using TanStack Query. The user supplies the plain async functions and a
+// query key.
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
 import { useState, useMemo } from "react";
 
 export interface UseEntityListOpts<T> {
   queryKey: readonly unknown[];
-  // Server-fn types are complex; use any to avoid coupling this hook to the generated types.
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  listFn: (...args: any[]) => Promise<T[]>;
+  listFn: () => Promise<T[]>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  saveFn: (data: { data: any }) => Promise<T | null>;
+  saveFn: (input: any) => Promise<T>;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  deleteFn: (data: { data: { id: string } }) => Promise<{ ok: true }>;
+  deleteFn: (input: { id: string }) => Promise<{ ok: true }>;
 }
 
 export function useEntityList<T extends { id?: string | null }>(opts: UseEntityListOpts<T>) {
   const qc = useQueryClient();
-  // useServerFn is generic and infers from the wrapped function; we pass `as any` to decouple.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const listServer = useServerFn(opts.listFn as any) as unknown as () => Promise<T[]>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const saveServer = useServerFn(opts.saveFn as any) as unknown as (input: { data: Partial<T> }) => Promise<T | null>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const delServer = useServerFn(opts.deleteFn as any) as unknown as (input: { data: { id: string } }) => Promise<{ ok: true }>;
   const [search, setSearch] = useState("");
 
-  const query = useQuery({ queryKey: opts.queryKey, queryFn: () => listServer() });
+  const query = useQuery({ queryKey: opts.queryKey, queryFn: opts.listFn });
 
   const save = useMutation({
-    mutationFn: (row: Partial<T> & { id?: string | null }) => saveServer({ data: row }),
+    mutationFn: (row: Partial<T> & { id?: string | null }) => opts.saveFn(row),
     onSuccess: () => qc.invalidateQueries({ queryKey: opts.queryKey }),
   });
   const remove = useMutation({
-    mutationFn: (id: string) => delServer({ data: { id } }),
+    mutationFn: (id: string) => opts.deleteFn({ id }),
     onSuccess: () => qc.invalidateQueries({ queryKey: opts.queryKey }),
   });
 

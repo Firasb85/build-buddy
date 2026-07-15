@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
-import { listAiRuns } from "@/lib/factory.functions";
+import { listAiRuns } from "@/lib/local-api";
 import { useI18n } from "@/hooks/use-i18n";
 import { useState } from "react";
 import { Activity, CheckCircle2, XCircle, Loader2, RefreshCw } from "lucide-react";
@@ -29,13 +28,12 @@ const KIND_COLORS: Record<string, string> = {
 
 export function JobsPanel() {
   const { t } = useI18n();
-  const listRuns = useServerFn(listAiRuns);
   const [kindFilter, setKindFilter] = useState<string>("");
   const [statusFilter, setStatusFilter] = useState<string>("");
 
   const query = useQuery({
     queryKey: ["ai-runs", kindFilter, statusFilter],
-    queryFn: () => listRuns(),
+    queryFn: () => listAiRuns(),
     refetchInterval: 5000, // poll for live updates
   });
 

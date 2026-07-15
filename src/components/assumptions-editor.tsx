@@ -1,9 +1,6 @@
 import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
-import { setCustomWeights, clearCustomWeights, getObjective } from "@/lib/objective.functions";
-import { runPPS } from "@/lib/pps.functions";
-import { generateBriefing } from "@/lib/briefing.functions";
+import { setCustomWeights, clearCustomWeights, getObjective, runPPS, generateBriefing } from "@/lib/local-api";
 import { useI18n } from "@/hooks/use-i18n";
 import { Sliders, Sparkles, RefreshCw, RotateCcw } from "lucide-react";
 
@@ -27,11 +24,6 @@ const PRESET_WEIGHTS: Record<string, number[]> = {
 export function AssumptionsEditor() {
   const { t, lang } = useI18n();
   const qc = useQueryClient();
-  const getObj = useServerFn(getObjective);
-  const setWeightsFn = useServerFn(setCustomWeights);
-  const clearFn = useServerFn(clearCustomWeights);
-  const runFn = useServerFn(runPPS);
-  const briefFn = useServerFn(generateBriefing);
 
   const [weights, setWeights] = useState<number[]>(PRESET_WEIGHTS.default);
   const [objective, setObjective] = useState<string>("default");
@@ -42,14 +34,14 @@ export function AssumptionsEditor() {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const r = await getObj();
+      const r = await getObjective();
       if (cancelled) return;
       setObjective(r.objective);
       setIsCustom(!!r.custom_weights);
       setWeights((r.effective_weights as number[]) ?? PRESET_WEIGHTS[r.objective] ?? PRESET_WEIGHTS.default);
     })();
     return () => { cancelled = true; };
-  }, [getObj]);
+  }, []);
 
   const sum = weights.reduce((a, b) => a + b, 0);
   const sumOk = Math.abs(sum - 1) < 0.01;
@@ -70,8 +62,8 @@ export function AssumptionsEditor() {
   const apply = useMutation({
     mutationFn: async () => {
       if (!sumOk) throw new Error(t.assumptions_invalid_sum);
-      await setWeightsFn({ data: { weights: weights.map((w) => Number(w.toFixed(4))) } });
-      await runFn();
+      await setCustomWeights({ weights: weights.map((w) => Number(w.toFixed(4))) });
+      await runPPS();
     },
     onSuccess: () => {
       setIsCustom(true);
@@ -82,7 +74,7 @@ export function AssumptionsEditor() {
   });
 
   const clear = useMutation({
-    mutationFn: () => clearFn(),
+    mutationFn: () => clearCustomWeights(),
     onSuccess: () => {
       setIsCustom(false);
       setWeights(PRESET_WEIGHTS[objective] ?? PRESET_WEIGHTS.default);
@@ -91,7 +83,7 @@ export function AssumptionsEditor() {
   });
 
   const regenBriefing = useMutation({
-    mutationFn: () => briefFn({ data: { lang: langForBriefing } }),
+    mutationFn: () => generateBriefing({ lang: langForBriefing }),
   });
 
   return (

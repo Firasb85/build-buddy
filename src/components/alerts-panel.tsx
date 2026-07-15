@@ -1,6 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
-import { detectAndPersistAlerts, listActiveAlerts, dismissAlert } from "@/lib/anomaly.functions";
+import { detectAndPersistAlerts, listActiveAlerts, dismissAlert } from "@/lib/local-api";
 import { useI18n } from "@/hooks/use-i18n";
 import { AlertTriangle, AlertOctagon, Info, X, RefreshCw } from "lucide-react";
 
@@ -23,15 +22,13 @@ interface AlertRow {
 export function AlertsPanel() {
   const { t, lang } = useI18n();
   const qc = useQueryClient();
-  const detectFn = useServerFn(detectAndPersistAlerts);
-  const dismissFn = useServerFn(dismissAlert);
   const alerts = useQuery({ queryKey: ["alerts-active"], queryFn: () => listActiveAlerts() });
   const detect = useMutation({
-    mutationFn: () => detectFn(),
+    mutationFn: () => detectAndPersistAlerts(),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["alerts-active"] }),
   });
   const dismiss = useMutation({
-    mutationFn: (id: string) => dismissFn({ data: { id } }),
+    mutationFn: (id: string) => dismissAlert({ id }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["alerts-active"] }),
   });
 

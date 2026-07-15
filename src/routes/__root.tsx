@@ -9,9 +9,8 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
 import { I18nProvider } from "@/hooks/use-i18n";
-import { supabase } from "@/integrations/supabase/client";
+import { ensureSeeded } from "@/lib/local-db";
 
 function NotFoundComponent() {
   return (
@@ -25,20 +24,13 @@ function NotFoundComponent() {
 }
 
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
-  const router = useRouter();
-  useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
   return (
     <div className="flex min-h-screen items-center justify-center px-6">
       <div className="max-w-md card-panel p-8 text-center">
         <h1 className="text-xl font-semibold">Something went wrong</h1>
         <p className="mt-2 text-sm text-muted-foreground">{error.message}</p>
         <button
-          onClick={() => {
-            router.invalidate();
-            reset();
-          }}
+          onClick={() => { reset(); window.location.reload(); }}
           className="btn-primary mt-4"
         >
           Try again
@@ -100,16 +92,10 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  const router = useRouter();
   useEffect(() => {
-    const { data: sub } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "SIGNED_IN" || event === "SIGNED_OUT" || event === "USER_UPDATED") {
-        router.invalidate();
-        if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
-      }
-    });
-    return () => sub.subscription.unsubscribe();
-  }, [router, queryClient]);
+    // Seed the local DB on first run.
+    ensureSeeded().catch((e) => console.error("[seed]", e));
+  }, []);
   return (
     <QueryClientProvider client={queryClient}>
       <I18nProvider>

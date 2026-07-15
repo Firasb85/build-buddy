@@ -1,52 +1,29 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useQuery, useMutation, useQueryClient, queryOptions } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
-import { runPPS, getLatestPPS } from "@/lib/pps.functions";
-import { listRecommendations, decideRecommendation } from "@/lib/decisions.functions";
-import { generateBriefing } from "@/lib/briefing.functions";
-import { getObjective } from "@/lib/objective.functions";
+import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { runPPS, getLatestPPS, listRecommendations, decideRecommendation, generateBriefing, getObjective } from "@/lib/local-api";
 import { useI18n, pickName } from "@/hooks/use-i18n";
-import { Activity, AlertTriangle, RefreshCw, Sparkles, Check, X, TrendingUp, Brain, Bot, BarChart3, FlaskConical, Zap, Download } from "lucide-react";
+import { Activity, AlertTriangle, RefreshCw, Sparkles, Check, X, TrendingUp, Brain, Bot, FlaskConical, Download } from "lucide-react";
 import { AlertsPanel } from "@/components/alerts-panel";
 import { AssumptionsEditor } from "@/components/assumptions-editor";
 import { Link } from "@tanstack/react-router";
 import { rowsToCsv, downloadCsv, rowsToPdf, type ColumnDef } from "@/lib/export.client";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
-  component: DashboardWrapper,
+  component: Dashboard,
 });
-
-const ppsQO = queryOptions({ queryKey: ["pps-latest"], queryFn: () => getLatestPPS() });
-const recoQO = queryOptions({ queryKey: ["recommendations"], queryFn: () => listRecommendations() });
-const objQO = queryOptions({ queryKey: ["objective"], queryFn: () => getObjective() });
-
-function DashboardWrapper() {
-  // Ensure user has a profile row (idempotent)
-  useEffect(() => {
-    supabase.auth.getUser().then(async ({ data }) => {
-      if (!data.user) return;
-      await supabase.from("profiles").upsert({ id: data.user.id, email: data.user.email }, { onConflict: "id" });
-    });
-  }, []);
-  return <Dashboard />;
-}
 
 function Dashboard() {
   const { t, lang } = useI18n();
   const qc = useQueryClient();
-  const runFn = useServerFn(runPPS);
-  const briefFn = useServerFn(generateBriefing);
-  const decide = useServerFn(decideRecommendation);
-  const pps = useQuery(ppsQO);
-  const recos = useQuery(recoQO);
-  const obj = useQuery(objQO);
+  const pps = useQuery({ queryKey: ["pps-latest"], queryFn: () => getLatestPPS() });
+  const recos = useQuery({ queryKey: ["recommendations"], queryFn: () => listRecommendations() });
+  const obj = useQuery({ queryKey: ["objective"], queryFn: () => getObjective() });
   const [briefing, setBriefing] = useState<string>("");
   const [briefLoading, setBriefLoading] = useState(false);
 
   const compute = useMutation({
-    mutationFn: () => runFn(),
+    mutationFn: () => runPPS(),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["pps-latest"] });
       qc.invalidateQueries({ queryKey: ["recommendations"] });
@@ -55,7 +32,7 @@ function Dashboard() {
 
   const decideMut = useMutation({
     mutationFn: (v: { id: string; accept: boolean }) =>
-      decide({ data: { recommendation_id: v.id, accept: v.accept } }),
+      decideRecommendation({ recommendation_id: v.id, accept: v.accept }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["recommendations"] }),
   });
 
@@ -64,9 +41,8 @@ function Dashboard() {
   const topFive = [...rows].slice(0, 5);
   const constrainedCount = rows.filter((r) => r.constraint_status === "constrained").length;
 
-  // KPIs derived from PPS snapshot data
-  const totalStock = rows.reduce((a, r) => a + Number((r as { products?: { stock_qty?: number } }).products?.stock_qty ?? 0), 0);
-  const totalDemand = rows.reduce((a, r) => a + Number((r as { products?: { daily_demand?: number } }).products?.daily_demand ?? 0), 0);
+  const totalStock = rows.reduce((a, r) => a + Number(r.product?.stock_qty ?? 0), 0);
+  const totalDemand = rows.reduce((a, r) => a + Number(r.product?.daily_demand ?? 0), 0);
   const stockDays = totalDemand > 0 ? (totalStock / totalDemand).toFixed(1) : "—";
   const avgReadiness = rows.length
     ? Math.round(rows.reduce((a, r) => a + Number(r.components?.material_readiness ?? 0), 0) / rows.length)
@@ -76,7 +52,7 @@ function Dashboard() {
   async function generate() {
     setBriefLoading(true);
     try {
-      const r = await briefFn({ data: { lang } });
+      const r = await generateBriefing({ lang });
       setBriefing(r.text);
     } catch (e) {
       setBriefing(e instanceof Error ? e.message : String(e));
@@ -91,7 +67,7 @@ function Dashboard() {
         <div>
           <h1 className="text-2xl font-bold">{t.nav_dashboard}</h1>
           <p className="text-sm text-muted-foreground">
-            {t.objective}: <span className="text-foreground font-medium">{t[`obj_${obj.data?.objective ?? "default"}`] ?? "—"}</span>
+            {t.objective}: <span className="text-foreground font-medium">{t[`obj_${obj.data?.objective ?? "default"}` as keyof typeof t] ?? "—"}</span>
             {pps.data?.runAt ? ` · ${new Date(pps.data.runAt).toLocaleString()}` : ""}
           </p>
         </div>
@@ -101,7 +77,6 @@ function Dashboard() {
         </button>
       </div>
 
-      {/* KPIs */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <KPI label={t.kpi_service_level} value={`${serviceLevel}${serviceLevel === "—" ? "" : "%"}`} />
         <KPI label={t.kpi_stock_days} value={stockDays} suffix="d" />
@@ -109,7 +84,6 @@ function Dashboard() {
         <KPI label={t.kpi_top_bottleneck} value={String(constrainedCount)} suffix={t.constraint_blocked} accent={constrainedCount > 0} />
       </div>
 
-      {/* AI Agents — Phase 2 quick links */}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <AgentCard to="/forecast" icon={TrendingUp} title={t.nav_forecast} subtitle={t.forecast_desc} />
         <AgentCard to="/simulate" icon={FlaskConical} title={t.nav_simulate} subtitle={t.simulate_desc} />
@@ -118,7 +92,6 @@ function Dashboard() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        {/* Actions */}
         <section className="card-panel p-5 lg:col-span-2">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold flex items-center gap-2">
@@ -166,7 +139,6 @@ function Dashboard() {
           </div>
         </section>
 
-        {/* AI briefing */}
         <section className="card-panel p-5">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold flex items-center gap-2">
@@ -183,24 +155,15 @@ function Dashboard() {
         </section>
       </div>
 
-      {/* PPS Top 5 */}
       <section className="card-panel p-5">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold">{t.pps} · Top 5</h2>
           {topFive.length > 0 && (
             <div className="flex items-center gap-1">
-              <button
-                className="btn-ghost !px-2 !py-1 text-xs"
-                onClick={() => exportPpsCsv(topFive, lang)}
-                title={t.export_csv}
-              >
+              <button className="btn-ghost !px-2 !py-1 text-xs" onClick={() => exportPpsCsv(topFive, lang)} title={t.export_csv}>
                 <Download className="h-3 w-3" /> CSV
               </button>
-              <button
-                className="btn-ghost !px-2 !py-1 text-xs"
-                onClick={() => exportPpsPdf(topFive, lang)}
-                title={t.export_pdf}
-              >
+              <button className="btn-ghost !px-2 !py-1 text-xs" onClick={() => exportPpsPdf(topFive, lang)} title={t.export_pdf}>
                 <Download className="h-3 w-3" /> PDF
               </button>
             </div>
@@ -220,17 +183,17 @@ function Dashboard() {
             </thead>
             <tbody>
               {topFive.map((r) => {
-                const p = (r as { products?: { name_ar: string; name_en: string; sku: string } }).products;
+                const p = r.product;
                 return (
                   <tr key={r.product_id} className="border-t border-border">
                     <td className="py-3">
                       <div className="font-medium">{p ? pickName(p, lang) : r.product_id.slice(0, 6)}</div>
                       <div className="text-xs text-muted-foreground">{p?.sku}</div>
                     </td>
-                    <td className="text-end font-semibold tabular-nums">{r.pps}</td>
-                    <td className="text-end hidden md:table-cell tabular-nums">{r.components.stockout_risk}</td>
-                    <td className="text-end hidden md:table-cell tabular-nums">{r.components.profit_impact}</td>
-                    <td className="text-end hidden lg:table-cell tabular-nums">{r.components.material_readiness}</td>
+                    <td className="text-end font-semibold tabular-nums">{r.pps.toFixed(0)}</td>
+                    <td className="text-end hidden md:table-cell tabular-nums">{r.components.stockout_risk.toFixed(0)}</td>
+                    <td className="text-end hidden md:table-cell tabular-nums">{r.components.profit_impact.toFixed(0)}</td>
+                    <td className="text-end hidden lg:table-cell tabular-nums">{r.components.material_readiness.toFixed(0)}</td>
                     <td className="text-end">
                       {r.constraint_status === "constrained" ? (
                         <span className="inline-flex items-center gap-1 text-warning text-xs">
@@ -245,58 +208,49 @@ function Dashboard() {
                 );
               })}
               {topFive.length === 0 && (
-                <tr>
-                  <td colSpan={6} className="py-8 text-center text-muted-foreground">
-                    {t.no_data}
-                  </td>
-                </tr>
+                <tr><td colSpan={6} className="py-8 text-center text-muted-foreground">{t.no_data}</td></tr>
               )}
             </tbody>
           </table>
         </div>
       </section>
 
-      {/* Alerts panel */}
       <AlertsPanel />
-
-      {/* Assumptions editor — Phase 3 */}
       <AssumptionsEditor />
     </div>
   );
 }
 
-function exportPpsCsv(rows: Array<{ product_id: string; pps: number; components: { stockout_risk: number; profit_impact: number; customer_importance: number; line_efficiency: number; material_readiness: number; strategic_weight: number }; constraint_status: string; products?: { name_ar: string; name_en: string; sku: string } | null }>, lang: "ar" | "en") {
-  type Row = typeof rows[number];
-  const cols: ColumnDef<Row>[] = [
-    { key: "sku", label: "SKU", format: (r) => r.products?.sku ?? "" },
-    { key: "name", label: lang === "ar" ? "المنتج" : "Product", format: (r) => r.products ? (lang === "ar" ? r.products.name_ar : r.products.name_en) : "" },
-    { key: "pps", label: "PPS" },
+function exportPpsCsv(rows: any[], lang: "ar" | "en") {
+  const cols: ColumnDef<any>[] = [
+    { key: "sku", label: "SKU", format: (r) => r.product?.sku ?? "" },
+    { key: "name", label: lang === "ar" ? "المنتج" : "Product", format: (r) => r.product ? (lang === "ar" ? r.product.name_ar : r.product.name_en) : "" },
+    { key: "pps", label: "PPS", format: (r) => r.pps.toFixed(2) },
     { key: "stockout_risk", label: "Stockout" },
     { key: "profit_impact", label: "Profit" },
     { key: "customer_importance", label: "Customer" },
     { key: "line_efficiency", label: "Line" },
     { key: "material_readiness", label: "Material" },
     { key: "strategic_weight", label: "Strategic" },
-    { key: "status", label: "Status", format: (r) => r.constraint_status },
+    { key: "status", label: "Status" },
   ];
-  downloadCsv(`ai-eos-pps-top5-${new Date().toISOString().slice(0, 10)}.csv`, rowsToCsv(rows as unknown as Row[], cols));
+  downloadCsv(`ai-eos-pps-top5-${new Date().toISOString().slice(0, 10)}.csv`, rowsToCsv(rows, cols));
 }
 
-async function exportPpsPdf(rows: Array<{ product_id: string; pps: number; components: { stockout_risk: number; profit_impact: number; customer_importance: number; line_efficiency: number; material_readiness: number; strategic_weight: number }; constraint_status: string; products?: { name_ar: string; name_en: string; sku: string } | null }>, lang: "ar" | "en") {
-  type Row = typeof rows[number];
-  const cols: ColumnDef<Row>[] = [
-    { key: "sku", label: "SKU", format: (r) => r.products?.sku ?? "" },
-    { key: "name", label: lang === "ar" ? "المنتج" : "Product", format: (r) => r.products ? (lang === "ar" ? r.products.name_ar : r.products.name_en) : "" },
-    { key: "pps", label: "PPS" },
+async function exportPpsPdf(rows: any[], lang: "ar" | "en") {
+  const cols: ColumnDef<any>[] = [
+    { key: "sku", label: "SKU", format: (r) => r.product?.sku ?? "" },
+    { key: "name", label: lang === "ar" ? "المنتج" : "Product", format: (r) => r.product ? (lang === "ar" ? r.product.name_ar : r.product.name_en) : "" },
+    { key: "pps", label: "PPS", format: (r) => r.pps.toFixed(2) },
     { key: "stockout_risk", label: "Stockout" },
     { key: "profit_impact", label: "Profit" },
     { key: "customer_importance", label: "Customer" },
     { key: "line_efficiency", label: "Line" },
     { key: "material_readiness", label: "Material" },
     { key: "strategic_weight", label: "Strategic" },
-    { key: "status", label: "Status", format: (r) => r.constraint_status },
+    { key: "status", label: "Status" },
   ];
-  await rowsToPdf(`ai-eos-pps-top5-${new Date().toISOString().slice(0, 10)}.pdf`, "AI-EOS · PPS Top 5", rows as unknown as Row[], cols, { subtitle: new Date().toLocaleString() });
+  await rowsToPdf(`ai-eos-pps-top5-${new Date().toISOString().slice(0, 10)}.pdf`, "AI-EOS · PPS Top 5", rows, cols, { subtitle: new Date().toLocaleString() });
 }
 
 function KPI({ label, value, suffix, accent }: { label: string; value: string; suffix?: string; accent?: boolean }) {
@@ -313,10 +267,7 @@ function KPI({ label, value, suffix, accent }: { label: string; value: string; s
 
 function AgentCard({ to, icon: Icon, title, subtitle }: { to: string; icon: typeof TrendingUp; title: string; subtitle: string }) {
   return (
-    <Link
-      to={to}
-      className="card-panel p-4 group hover:border-primary/60 hover:bg-surface-2/40 transition"
-    >
+    <Link to={to} className="card-panel p-4 group hover:border-primary/60 hover:bg-surface-2/40 transition">
       <div className="flex items-center gap-3">
         <div className="grid h-9 w-9 place-items-center rounded-md bg-primary/10 text-primary group-hover:bg-primary/20">
           <Icon className="h-4 w-4" />

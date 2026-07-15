@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Plus, Edit, Trash2 } from "lucide-react";
-import { listLines, saveLine, deleteLine } from "@/lib/factory.functions";
+import { listLines, saveLine, deleteLine } from "@/lib/local-api";
 import { useI18n, pickName } from "@/hooks/use-i18n";
 import { EntityDrawer, PageHeader, type DrawerField } from "@/components/entity-drawer";
 import { useEntityList } from "@/hooks/use-entity-list";
