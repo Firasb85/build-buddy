@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { listDecisionLog } from "@/lib/local-api";
 import { useI18n, pickName } from "@/hooks/use-i18n";
 import { Download } from "lucide-react";
-import { rowsToCsv, downloadCsv, rowsToPdf, type ColumnDef } from "@/lib/export.client";
+import { rowsToCsv, downloadCsv, rowsToPdf, type ColumnDef } from "@/lib/export";
 import { listProducts } from "@/lib/local-api";
 
 export const Route = createFileRoute("/_authenticated/decisions")({

@@ -7,7 +7,7 @@ import { Activity, AlertTriangle, RefreshCw, Sparkles, Check, X, TrendingUp, Bra
 import { AlertsPanel } from "@/components/alerts-panel";
 import { AssumptionsEditor } from "@/components/assumptions-editor";
 import { Link } from "@tanstack/react-router";
-import { rowsToCsv, downloadCsv, rowsToPdf, type ColumnDef } from "@/lib/export.client";
+import { rowsToCsv, downloadCsv, rowsToPdf, type ColumnDef } from "@/lib/export";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
   component: Dashboard,
