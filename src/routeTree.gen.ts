@@ -11,19 +11,19 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedSimulateRouteImport } from './routes/_authenticated/simulate'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
 import { Route as AuthenticatedProductsRouteImport } from './routes/_authenticated/products'
 import { Route as AuthenticatedPrioritiesRouteImport } from './routes/_authenticated/priorities'
-import { Route as AuthenticatedOrdersRouteImport } from './routes/_authenticated/orders'
 import { Route as AuthenticatedOutputsRouteImport } from './routes/_authenticated/outputs'
+import { Route as AuthenticatedOrdersRouteImport } from './routes/_authenticated/orders'
 import { Route as AuthenticatedMaterialsRouteImport } from './routes/_authenticated/materials'
-import { Route as AuthenticatedLearningRouteImport } from './routes/_authenticated/learning'
 import { Route as AuthenticatedLinesRouteImport } from './routes/_authenticated/lines'
+import { Route as AuthenticatedLearningRouteImport } from './routes/_authenticated/learning'
 import { Route as AuthenticatedInputsRouteImport } from './routes/_authenticated/inputs'
-import { Route as AuthenticatedFactoryRouteImport } from './routes/_authenticated/factory'
 import { Route as AuthenticatedForecastRouteImport } from './routes/_authenticated/forecast'
+import { Route as AuthenticatedFactoryRouteImport } from './routes/_authenticated/factory'
 import { Route as AuthenticatedDecisionsRouteImport } from './routes/_authenticated/decisions'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedDailyRouteImport } from './routes/_authenticated/daily'
@@ -39,14 +39,14 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedSimulateRoute = AuthenticatedSimulateRouteImport.update({
   id: '/simulate',
   path: '/simulate',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedReportsRoute = AuthenticatedReportsRouteImport.update({
@@ -64,14 +64,14 @@ const AuthenticatedPrioritiesRoute = AuthenticatedPrioritiesRouteImport.update({
   path: '/priorities',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedOrdersRoute = AuthenticatedOrdersRouteImport.update({
-  id: '/orders',
-  path: '/orders',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedOutputsRoute = AuthenticatedOutputsRouteImport.update({
   id: '/outputs',
   path: '/outputs',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedOrdersRoute = AuthenticatedOrdersRouteImport.update({
+  id: '/orders',
+  path: '/orders',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedMaterialsRoute = AuthenticatedMaterialsRouteImport.update({
@@ -79,14 +79,14 @@ const AuthenticatedMaterialsRoute = AuthenticatedMaterialsRouteImport.update({
   path: '/materials',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedLearningRoute = AuthenticatedLearningRouteImport.update({
-  id: '/learning',
-  path: '/learning',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedLinesRoute = AuthenticatedLinesRouteImport.update({
   id: '/lines',
   path: '/lines',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedLearningRoute = AuthenticatedLearningRouteImport.update({
+  id: '/learning',
+  path: '/learning',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedInputsRoute = AuthenticatedInputsRouteImport.update({
@@ -94,14 +94,14 @@ const AuthenticatedInputsRoute = AuthenticatedInputsRouteImport.update({
   path: '/inputs',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedFactoryRoute = AuthenticatedFactoryRouteImport.update({
-  id: '/factory',
-  path: '/factory',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedForecastRoute = AuthenticatedForecastRouteImport.update({
   id: '/forecast',
   path: '/forecast',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedFactoryRoute = AuthenticatedFactoryRouteImport.update({
+  id: '/factory',
+  path: '/factory',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedDecisionsRoute = AuthenticatedDecisionsRouteImport.update({
@@ -176,24 +176,24 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
-  '/assistant': typeof AuthenticatedAssistantRoute
-  '/customers': typeof AuthenticatedCustomersRoute
-  '/daily': typeof AuthenticatedDailyRoute
-  '/dashboard': typeof AuthenticatedDashboardRoute
-  '/decisions': typeof AuthenticatedDecisionsRoute
-  '/factory': typeof AuthenticatedFactoryRoute
-  '/forecast': typeof AuthenticatedForecastRoute
-  '/inputs': typeof AuthenticatedInputsRoute
-  '/learning': typeof AuthenticatedLearningRoute
-  '/lines': typeof AuthenticatedLinesRoute
-  '/materials': typeof AuthenticatedMaterialsRoute
-  '/orders': typeof AuthenticatedOrdersRoute
-  '/outputs': typeof AuthenticatedOutputsRoute
-  '/priorities': typeof AuthenticatedPrioritiesRoute
-  '/products': typeof AuthenticatedProductsRoute
-  '/reports': typeof AuthenticatedReportsRoute
-  '/settings': typeof AuthenticatedSettingsRoute
-  '/simulate': typeof AuthenticatedSimulateRoute
+  '/_authenticated/assistant': typeof AuthenticatedAssistantRoute
+  '/_authenticated/customers': typeof AuthenticatedCustomersRoute
+  '/_authenticated/daily': typeof AuthenticatedDailyRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/decisions': typeof AuthenticatedDecisionsRoute
+  '/_authenticated/factory': typeof AuthenticatedFactoryRoute
+  '/_authenticated/forecast': typeof AuthenticatedForecastRoute
+  '/_authenticated/inputs': typeof AuthenticatedInputsRoute
+  '/_authenticated/learning': typeof AuthenticatedLearningRoute
+  '/_authenticated/lines': typeof AuthenticatedLinesRoute
+  '/_authenticated/materials': typeof AuthenticatedMaterialsRoute
+  '/_authenticated/orders': typeof AuthenticatedOrdersRoute
+  '/_authenticated/outputs': typeof AuthenticatedOutputsRoute
+  '/_authenticated/priorities': typeof AuthenticatedPrioritiesRoute
+  '/_authenticated/products': typeof AuthenticatedProductsRoute
+  '/_authenticated/reports': typeof AuthenticatedReportsRoute
+  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/simulate': typeof AuthenticatedSimulateRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -242,24 +242,24 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
-    | '/assistant'
-    | '/customers'
-    | '/daily'
-    | '/dashboard'
-    | '/decisions'
-    | '/factory'
-    | '/forecast'
-    | '/inputs'
-    | '/learning'
-    | '/lines'
-    | '/materials'
-    | '/orders'
-    | '/outputs'
-    | '/priorities'
-    | '/products'
-    | '/reports'
-    | '/settings'
-    | '/simulate'
+    | '/_authenticated/assistant'
+    | '/_authenticated/customers'
+    | '/_authenticated/daily'
+    | '/_authenticated/dashboard'
+    | '/_authenticated/decisions'
+    | '/_authenticated/factory'
+    | '/_authenticated/forecast'
+    | '/_authenticated/inputs'
+    | '/_authenticated/learning'
+    | '/_authenticated/lines'
+    | '/_authenticated/materials'
+    | '/_authenticated/orders'
+    | '/_authenticated/outputs'
+    | '/_authenticated/priorities'
+    | '/_authenticated/products'
+    | '/_authenticated/reports'
+    | '/_authenticated/settings'
+    | '/_authenticated/simulate'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -283,18 +283,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/settings': {
-      id: '/_authenticated/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/simulate': {
       id: '/_authenticated/simulate'
       path: '/simulate'
       fullPath: '/simulate'
       preLoaderRoute: typeof AuthenticatedSimulateRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/reports': {
@@ -318,18 +318,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPrioritiesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/orders': {
-      id: '/_authenticated/orders'
-      path: '/orders'
-      fullPath: '/orders'
-      preLoaderRoute: typeof AuthenticatedOrdersRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/outputs': {
       id: '/_authenticated/outputs'
       path: '/outputs'
       fullPath: '/outputs'
       preLoaderRoute: typeof AuthenticatedOutputsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/orders': {
+      id: '/_authenticated/orders'
+      path: '/orders'
+      fullPath: '/orders'
+      preLoaderRoute: typeof AuthenticatedOrdersRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/materials': {
@@ -339,18 +339,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMaterialsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/learning': {
-      id: '/_authenticated/learning'
-      path: '/learning'
-      fullPath: '/learning'
-      preLoaderRoute: typeof AuthenticatedLearningRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/lines': {
       id: '/_authenticated/lines'
       path: '/lines'
       fullPath: '/lines'
       preLoaderRoute: typeof AuthenticatedLinesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/learning': {
+      id: '/_authenticated/learning'
+      path: '/learning'
+      fullPath: '/learning'
+      preLoaderRoute: typeof AuthenticatedLearningRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/inputs': {
@@ -360,18 +360,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInputsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/factory': {
-      id: '/_authenticated/factory'
-      path: '/factory'
-      fullPath: '/factory'
-      preLoaderRoute: typeof AuthenticatedFactoryRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/forecast': {
       id: '/_authenticated/forecast'
       path: '/forecast'
       fullPath: '/forecast'
       preLoaderRoute: typeof AuthenticatedForecastRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/factory': {
+      id: '/_authenticated/factory'
+      path: '/factory'
+      fullPath: '/factory'
+      preLoaderRoute: typeof AuthenticatedFactoryRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/decisions': {
